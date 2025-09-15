@@ -1,0 +1,71 @@
+Analyze the provided JSON OOO data and categorize items by priority. Focus on what actually needs attention.
+
+## Data Structure
+The data will be provided in this JSON format:
+```json
+{
+  "emails": [...],
+  "calendar_events": [...],
+  "slack_messages": [...],
+  "kanban_tasks": [...]
+}
+```
+
+**P0 (Critical)**: Urgent items requiring immediate action
+- From executives (CEO, CTO), managers, or external clients
+- Contains urgent language: "ASAP", "urgent", "critical", "deadline", "blocked"
+- Business-critical issues, client problems, security concerns
+- Specific deadlines or time-sensitive requirements
+- **GitHub**: Issues from external clients (client@external.com), high priority bugs, security vulnerabilities
+- **Calendar**: Deadlines, urgent meetings with executives
+- **Email**: Urgent client communications, executive requests
+- **Slack**: Direct mentions from managers/executives, urgent requests
+- **Kanban**: Blocked tasks, high priority items with deadlines
+
+**P1 (Important)**: Items that need attention but aren't urgent
+- Regular meetings, status updates, planning items
+- Internal team coordination and process improvements
+- Flexible timelines or no specific deadlines
+- **GitHub**: Build failures, workflow issues, medium priority bugs
+- **Calendar**: Regular team meetings (standups, 1:1s), planning sessions, strategy reviews
+- **Email**: Important but not urgent communications
+- **Slack**: Team discussions, status updates
+- **Kanban**: In-progress tasks, medium priority items
+
+**Ignore**: Meeting reminders, promotions, social events, general announcements, other teams' work
+
+**Examples**:
+- **P0**: "API rate limiting not working correctly" from client@external.com (external client, business-critical)
+- **P0**: "Fix Database Connection Pool" - blocked task with deadline
+- **P1**: "Weekly Team Standup" - regular meeting
+- **P1**: "1:1 with Sarah" - regular meeting
+- **P1**: "Q1 Strategy Review" - planning session
+- **P1**: "Build failing on Node.js 18" - build issue, not urgent
+- **Ignore**: "Farewell Party for Mike" - social event
+
+Return ONLY this JSON structure:
+
+{
+  "updates": {
+    "email": {
+      "P0": [{"title": "...", "due_date": "YYYY-MM-DD", "source": "email", "context": "..."}],
+      "P1": [{"title": "...", "due_date": "YYYY-MM-DD", "source": "email", "context": "..."}]
+    },
+    "calendar": {
+      "P0": [{"title": "...", "due_date": "YYYY-MM-DD", "source": "calendar", "context": "..."}],
+      "P1": [{"title": "...", "due_date": "YYYY-MM-DD", "source": "calendar", "context": "..."}]
+    },
+    "slack": {
+      "P0": [{"title": "...", "due_date": "YYYY-MM-DD", "source": "slack", "context": "..."}],
+      "P1": [{"title": "...", "due_date": "YYYY-MM-DD", "source": "slack", "context": "..."}]
+    },
+    "kanban": {
+      "P0": [{"title": "...", "due_date": "YYYY-MM-DD", "source": "kanban", "context": "..."}],
+      "P1": [{"title": "...", "due_date": "YYYY-MM-DD", "source": "kanban", "context": "..."}]
+    }
+  }
+}
+
+There are 4 input data sources. Hence there will be 4 sections in the JSON object.
+Do not miss any section.
+IMPORTANT: Double check the output JSON object to ensure that all the sections and P0, P1 are present.
