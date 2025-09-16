@@ -21,7 +21,7 @@ def get_commits(start_date: str, end_date: str, repository: Optional[str] = None
     cursor = conn.cursor()
     
     query = """
-    SELECT id, repository, author, message, commit_hash, branch, files_changed, lines_added, lines_deleted, commit_date
+    SELECT custom_id, repository, author, message, commit_hash, branch, files_changed, lines_added, lines_deleted, commit_date
     FROM commits 
     WHERE commit_date BETWEEN ? AND ?
     """
@@ -63,7 +63,7 @@ def get_pull_requests(start_date: str, end_date: str, status: str = "all") -> st
     cursor = conn.cursor()
     
     query = """
-    SELECT id, repository, title, description, author, status, created_date, merged_date, review_count, comment_count
+    SELECT custom_id, repository, title, description, author, status, created_date, updated_date, merged_date
     FROM pull_requests 
     WHERE created_date BETWEEN ? AND ?
     """
@@ -89,9 +89,8 @@ def get_pull_requests(start_date: str, end_date: str, status: str = "all") -> st
             "author": pr[4],
             "status": pr[5],
             "created_date": pr[6],
-            "merged_date": pr[7],
-            "review_count": pr[8],
-            "comment_count": pr[9]
+            "updated_date": pr[7],
+            "merged_date": pr[8]
         }
         result.append(pr_data)
     
@@ -105,7 +104,7 @@ def get_issues(start_date: str, end_date: str, labels: Optional[List[str]] = Non
     cursor = conn.cursor()
     
     query = """
-    SELECT id, repository, title, description, author, status, labels, priority, created_date, closed_date
+    SELECT custom_id, repository, title, description, author, status, labels, priority, created_date, closed_date
     FROM issues 
     WHERE created_date BETWEEN ? AND ?
     """

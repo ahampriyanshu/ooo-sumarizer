@@ -51,10 +51,6 @@ class OOOSummarizerAgent:
                     'command': 'python',
                     'args': ['mcp_servers/slack_server.py']
                 },
-                'kanban': {
-                    'command': 'python',
-                    'args': ['mcp_servers/kanban_server.py']
-                },
             }
         }
         
@@ -65,7 +61,7 @@ class OOOSummarizerAgent:
             client=self.mcp_client
         )
 
-    async def generate_report(self, start_date: str = "2024-01-15", end_date: str = "2024-01-22"):
+    async def generate_report(self, start_date: str = "2024-01-01", end_date: str = "2024-01-03"):
         """Generate complete OOO summary report using dynamic tool discovery"""
         print("🚀 Starting OOO Summarizer Agent with dynamic tool discovery...")
         print(f"📅 OOO Period: {start_date} to {end_date}")
@@ -87,6 +83,10 @@ class OOOSummarizerAgent:
             print("🔍 Discovering available tools and collecting data...")
             data_result = await self.agent.run(data_collection_prompt)
             print("✅ Data collection completed!")
+
+            print("------------DATA-RESULT-------------------")
+            print(data_result)
+            print("------------DATA-RESULT-------------------")
             
             # Generate summary using LLM
             with open("prompts/summary_prompt.txt", "r") as f:

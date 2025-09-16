@@ -21,7 +21,7 @@ def get_emails(start_date: str, end_date: str, limit: int = 50) -> str:
     cursor = conn.cursor()
     
     query = """
-    SELECT id, sender, subject, body, received_date, is_read, thread_id
+    SELECT custom_id, sender, subject, body, received_date, is_read, thread_id
     FROM emails 
     WHERE received_date BETWEEN ? AND ?
     ORDER BY received_date DESC LIMIT ?

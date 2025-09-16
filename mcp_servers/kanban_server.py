@@ -21,7 +21,7 @@ def get_tasks(start_date: str, end_date: str, status: str = "all") -> str:
     cursor = conn.cursor()
     
     query = """
-    SELECT id, title, description, status, priority, assignee, created_date, due_date, project, labels
+    SELECT custom_id, title, description, status, priority, assignee, created_date, due_date, project_name, story_points
     FROM tasks 
     WHERE created_date BETWEEN ? AND ?
     """
@@ -48,8 +48,8 @@ def get_tasks(start_date: str, end_date: str, status: str = "all") -> str:
             "assignee": task[5],
             "created_date": task[6],
             "due_date": task[7],
-            "project": task[8],
-            "labels": task[9]
+            "project_name": task[8],
+            "story_points": task[9]
         }
         result.append(task_data)
     
@@ -130,7 +130,7 @@ def get_blocked_tasks(start_date: str, end_date: str) -> str:
     cursor = conn.cursor()
     
     query = """
-    SELECT id, title, description, status, blocker_reason, blocked_by, project, priority
+    SELECT id, title, description, status, blocker_reason, blocked_by, project_name, priority
     FROM tasks 
     WHERE status = 'blocked' 
     AND (created_date BETWEEN ? AND ? OR updated_date BETWEEN ? AND ?)
@@ -150,7 +150,7 @@ def get_blocked_tasks(start_date: str, end_date: str) -> str:
             "status": task[3],
             "blocker_reason": task[4],
             "blocked_by": task[5],
-            "project": task[6],
+            "project_name": task[6],
             "priority": task[7]
         }
         result.append(task_data)

@@ -21,7 +21,7 @@ def get_messages(start_date: str, end_date: str, channel: Optional[str] = None) 
     cursor = conn.cursor()
     
     query = """
-    SELECT id, channel, user, message, timestamp, thread_ts, is_reply, reactions
+    SELECT custom_id, channel, user, message, timestamp, thread_id, is_mention
     FROM messages 
     WHERE timestamp BETWEEN ? AND ?
     """
@@ -45,9 +45,8 @@ def get_messages(start_date: str, end_date: str, channel: Optional[str] = None) 
             "user": message[2],
             "message": message[3],
             "timestamp": message[4],
-            "thread_ts": message[5],
-            "is_reply": bool(message[6]),
-            "reactions": message[7]
+            "thread_id": message[5],
+            "is_mention": bool(message[6])
         }
         result.append(message_data)
     
@@ -61,7 +60,7 @@ def get_mentions(start_date: str, end_date: str) -> str:
     cursor = conn.cursor()
     
     query = """
-    SELECT id, channel, user, message, timestamp, thread_ts
+    SELECT id, channel, user, message, timestamp, thread_id
     FROM messages 
     WHERE timestamp BETWEEN ? AND ?
     AND message LIKE '%@john.doe%'
@@ -80,7 +79,7 @@ def get_mentions(start_date: str, end_date: str) -> str:
             "user": mention[2],
             "message": mention[3],
             "timestamp": mention[4],
-            "thread_ts": mention[5]
+            "thread_id": mention[5]
         }
         result.append(mention_data)
     
@@ -93,10 +92,10 @@ def get_direct_messages(start_date: str, end_date: str) -> str:
     cursor = conn.cursor()
     
     query = """
-    SELECT id, channel, user, message, timestamp, thread_ts, is_private
+    SELECT id, channel, user, message, timestamp, thread_id, is_mention
     FROM messages 
     WHERE timestamp BETWEEN ? AND ?
-    AND (channel LIKE 'D%' OR is_private = 1)
+    AND channel LIKE 'D%'
     ORDER BY timestamp DESC
     """
     
@@ -112,8 +111,8 @@ def get_direct_messages(start_date: str, end_date: str) -> str:
             "user": dm[2],
             "message": dm[3],
             "timestamp": dm[4],
-            "thread_ts": dm[5],
-            "is_private": bool(dm[6])
+            "thread_id": dm[5],
+            "is_mention": bool(dm[6])
         }
         result.append(dm_data)
     

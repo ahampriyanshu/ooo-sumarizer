@@ -20,7 +20,7 @@ def get_events(start_date: str, end_date: str, event_type: str = "all") -> str:
     cursor = conn.cursor()
     
     query = """
-    SELECT id, title, description, start_time, end_time, location, attendees, event_type, is_all_day, reminder_set
+    SELECT custom_id, title, description, start_time, end_time, location, attendees, event_type, is_all_day, reminder_set
     FROM events 
     WHERE start_time BETWEEN ? AND ?
     """

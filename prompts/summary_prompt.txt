@@ -10,7 +10,6 @@ The data will be provided in this JSON format:
   "emails": [...],
   "calendar_events": [...],
   "slack_messages": [...],
-  "kanban_tasks": [...]
 }
 ```
 

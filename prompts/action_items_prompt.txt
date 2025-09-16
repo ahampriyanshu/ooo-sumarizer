@@ -10,20 +10,20 @@ The data will be provided in this JSON format:
   "emails": [...],
   "calendar_events": [...],
   "slack_messages": [...],
-  "kanban_tasks": [...]
 }
 ```
 
 ## Output Format
-Return ONLY a valid JSON object with this exact structure:
+Return ONLY a valid JSON object with this exact structure. IMPORTANT: Include the "id" field for each action item using the id from the input data:
 
 {
   "action_items": {
     "P0": [
       {
+        "id": "item_001",
         "title": "Action item title",
         "due_date": "YYYY-MM-DD",
-        "source": "email/slack/kanban/calendar",
+        "source": "email/slack/calendar",
         "context": "Brief context"
       }
     ],
@@ -40,6 +40,6 @@ Return ONLY a valid JSON object with this exact structure:
 ## Extraction Rules
 - Extract only concrete, actionable items
 - Include due dates when mentioned
-- Specify source (email, slack, kanban, calendar)
+- Specify source (email, slack, calendar)
 - Provide brief context
 - Return ONLY the JSON object, no other text
