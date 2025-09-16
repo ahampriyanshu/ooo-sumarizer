@@ -83,10 +83,6 @@ class OOOSummarizerAgent:
             print("🔍 Discovering available tools and collecting data...")
             data_result = await self.agent.run(data_collection_prompt)
             print("✅ Data collection completed!")
-
-            print("------------DATA-RESULT-------------------")
-            print(data_result)
-            print("------------DATA-RESULT-------------------")
             
             # Generate summary using LLM
             with open("prompts/summary_prompt.txt", "r") as f:
