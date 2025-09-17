@@ -1,0 +1,26 @@
+version: 1.0
+configuration:
+    has_webserver: false
+    scoring:
+        command: bash setup/install.sh && bash setup/cleanup.sh && bash setup/seed.sh && bash setup/test.sh
+        files:
+            - unit.xml
+    ide_config:
+        default_open_files:
+            - main.py
+        project_menu:
+            install: bash setup/install.sh && bash setup/cleanup.sh && bash setup/seed.sh
+            run: bash setup/install.sh && bash setup/cleanup.sh && bash setup/seed.sh && bash setup/run.sh
+            test: bash setup/install.sh && bash setup/cleanup.sh && bash setup/seed.sh && bash setup/test.sh
+    readonly_paths:
+        - README.md
+        - requirements.txt
+        - pytest.ini
+        - config/settings.py
+        - mcp_servers/__init__.py
+        - data/__init__.py
+        - data/ref/*
+        - prompts/*
+        - tests/conftest.py
+        - tests/test_data/*
+        - tests/prompts/*

@@ -10,6 +10,19 @@ from datetime import datetime
 from main import OOOSummarizerAgent
 
 
+def load_test_data(test_case="test_case_1"):
+    """Load test data from JSON file"""
+    test_data_path = os.path.join(os.path.dirname(__file__), "test_data", f"{test_case}.json")
+    with open(test_data_path, 'r') as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="session", params=["test_case_1", "test_case_2"])
+def test_case_data(request):
+    """Parameterized fixture that provides test case data for both test cases"""
+    return load_test_data(request.param)
+
+
 @pytest.fixture(scope="session")
 def agent_report():
     """

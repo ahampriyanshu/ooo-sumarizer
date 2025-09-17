@@ -12,10 +12,9 @@ def create_email_database():
     conn = sqlite3.connect("data/databases/emails.db")
     cursor = conn.cursor()
     
-    # Drop and recreate emails table to avoid duplication
-    cursor.execute("DROP TABLE IF EXISTS emails")
+    # Create emails table if it doesn't exist
     cursor.execute("""
-        CREATE TABLE emails (
+        CREATE TABLE IF NOT EXISTS emails (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             custom_id TEXT UNIQUE,
             sender TEXT NOT NULL,
@@ -136,7 +135,7 @@ def create_email_database():
     
     for email in emails:
         cursor.execute("""
-            INSERT INTO emails (custom_id, sender, subject, body, received_date, is_read, thread_id, meeting_date, meeting_duration, attendees)
+            INSERT OR IGNORE INTO emails (custom_id, sender, subject, body, received_date, is_read, thread_id, meeting_date, meeting_duration, attendees)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             email["id"], email["sender"], email["subject"], email["body"], email["received_date"],
@@ -154,10 +153,9 @@ def create_calendar_database():
     conn = sqlite3.connect("data/databases/calendar.db")
     cursor = conn.cursor()
     
-    # Drop and recreate events table to avoid duplication
-    cursor.execute("DROP TABLE IF EXISTS events")
+    # Create events table if it doesn't exist
     cursor.execute("""
-        CREATE TABLE events (
+        CREATE TABLE IF NOT EXISTS events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             custom_id TEXT UNIQUE,
             title TEXT NOT NULL,
@@ -287,7 +285,7 @@ def create_calendar_database():
     
     for event in events:
         cursor.execute("""
-            INSERT INTO events (custom_id, title, description, start_time, end_time, location, attendees, event_type, project_name)
+            INSERT OR IGNORE INTO events (custom_id, title, description, start_time, end_time, location, attendees, event_type, project_name)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             event["id"], event["title"], event["description"], event["start_time"], event["end_time"],
@@ -304,10 +302,9 @@ def create_slack_database():
     conn = sqlite3.connect("data/databases/slack.db")
     cursor = conn.cursor()
     
-    # Drop and recreate messages table to avoid duplication
-    cursor.execute("DROP TABLE IF EXISTS messages")
+    # Create messages table if it doesn't exist
     cursor.execute("""
-        CREATE TABLE messages (
+        CREATE TABLE IF NOT EXISTS messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             custom_id TEXT UNIQUE,
             channel TEXT NOT NULL,
@@ -425,7 +422,7 @@ def create_slack_database():
     
     for message in messages:
         cursor.execute("""
-            INSERT INTO messages (custom_id, channel, user, message, timestamp, is_mention, thread_id)
+            INSERT OR IGNORE INTO messages (custom_id, channel, user, message, timestamp, is_mention, thread_id)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             message["id"], message["channel"], message["user"], message["message"], message["timestamp"],
@@ -441,10 +438,9 @@ def create_kanban_database():
     conn = sqlite3.connect("data/databases/kanban.db")
     cursor = conn.cursor()
     
-    # Drop and recreate tasks table to avoid duplication
-    cursor.execute("DROP TABLE IF EXISTS tasks")
+    # Create tasks table if it doesn't exist
     cursor.execute("""
-        CREATE TABLE tasks (
+        CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             custom_id TEXT UNIQUE,
             title TEXT NOT NULL,
@@ -462,10 +458,9 @@ def create_kanban_database():
         )
     """)
     
-    # Drop and recreate task_updates table to avoid duplication
-    cursor.execute("DROP TABLE IF EXISTS task_updates")
+    # Create task_updates table if it doesn't exist
     cursor.execute("""
-        CREATE TABLE task_updates (
+        CREATE TABLE IF NOT EXISTS task_updates (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             custom_id TEXT UNIQUE,
             task_id INTEGER,
@@ -478,10 +473,9 @@ def create_kanban_database():
         )
     """)
     
-    # Drop and recreate project_progress table to avoid duplication
-    cursor.execute("DROP TABLE IF EXISTS project_progress")
+    # Create project_progress table if it doesn't exist
     cursor.execute("""
-        CREATE TABLE project_progress (
+        CREATE TABLE IF NOT EXISTS project_progress (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             custom_id TEXT UNIQUE,
             project_name TEXT NOT NULL,
@@ -635,7 +629,7 @@ def create_kanban_database():
     
     for task in tasks:
         cursor.execute("""
-            INSERT INTO tasks (custom_id, title, description, status, priority, assignee, due_date, project_name, story_points, created_date, updated_date, blocker_reason, blocked_by)
+            INSERT OR IGNORE INTO tasks (custom_id, title, description, status, priority, assignee, due_date, project_name, story_points, created_date, updated_date, blocker_reason, blocked_by)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             task["id"], task["title"], task["description"], task["status"], task["priority"],
@@ -676,7 +670,7 @@ def create_kanban_database():
     
     for update in task_updates:
         cursor.execute("""
-            INSERT INTO task_updates (custom_id, task_id, update_type, description, updated_by, updated_date, new_status)
+            INSERT OR IGNORE INTO task_updates (custom_id, task_id, update_type, description, updated_by, updated_date, new_status)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             update["id"], update["task_id"], update["update_type"], update["description"],
@@ -716,7 +710,7 @@ def create_kanban_database():
     
     for progress in project_progress:
         cursor.execute("""
-            INSERT INTO project_progress (custom_id, project_name, milestone, progress_percentage, status, due_date, updated_date)
+            INSERT OR IGNORE INTO project_progress (custom_id, project_name, milestone, progress_percentage, status, due_date, updated_date)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
             progress["id"], progress["project_name"], progress["milestone"], progress["progress_percentage"],
@@ -840,11 +834,11 @@ def create_github_database():
         (2, "company/frontend", 2, "bob@company.com", "Consider using CSS variables for better maintainability.", "styles/buttons.css", 12, "2024-01-01 16:00:00", "pending", "review_002"),
     ]
     
-    # Insert data
-    cursor.executemany("INSERT INTO commits VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", important_commits + noise_commits)
-    cursor.executemany("INSERT INTO pull_requests VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", important_prs + noise_prs)
-    cursor.executemany("INSERT INTO issues VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", important_issues + noise_issues)
-    cursor.executemany("INSERT INTO code_reviews VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", important_reviews + noise_reviews)
+    # Insert data (use OR IGNORE to avoid conflicts when appending)
+    cursor.executemany("INSERT OR IGNORE INTO commits VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", important_commits + noise_commits)
+    cursor.executemany("INSERT OR IGNORE INTO pull_requests VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", important_prs + noise_prs)
+    cursor.executemany("INSERT OR IGNORE INTO issues VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", important_issues + noise_issues)
+    cursor.executemany("INSERT OR IGNORE INTO code_reviews VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", important_reviews + noise_reviews)
     
     conn.commit()
     conn.close()

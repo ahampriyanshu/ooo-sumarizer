@@ -1,0 +1,139 @@
+{
+	"test_case": "Test Case 2: 7-day OOO (Jan 7-14, 2024)",
+	"description": "Mid-January context with security issues, performance problems, and Q1 planning",
+	"date_range": {
+		"start": "2024-01-07",
+		"end": "2024-01-14"
+	},
+	"important_ids": {
+		"emails": [
+			"email_001",
+			"email_002",
+			"email_011",
+			"email_014",
+			"email_015"
+		],
+		"calendar_events": ["event_001", "event_002", "event_003", "event_004"],
+		"slack_messages": ["slack_001", "slack_002", "slack_003", "slack_004"],
+		"kanban_tasks": ["task_001", "task_002", "task_003", "task_004"],
+		"github_commits": ["commit_001", "commit_002"],
+		"github_pull_requests": ["pr_001", "pr_002"],
+		"github_issues": ["issue_001", "issue_002"]
+	},
+	"noise_ids": {
+		"emails": [
+			"email_005",
+			"email_006",
+			"email_007",
+			"email_008",
+			"email_009",
+			"email_010",
+			"email_011",
+			"email_012",
+			"email_013",
+			"email_014",
+			"email_015",
+			"email_016",
+			"email_017",
+			"email_018",
+			"email_019",
+			"email_020"
+		],
+		"calendar_events": [
+			"event_005",
+			"event_006",
+			"event_007",
+			"event_008",
+			"event_009",
+			"event_010",
+			"event_011",
+			"event_012",
+			"event_013",
+			"event_014",
+			"event_015",
+			"event_016",
+			"event_017",
+			"event_018",
+			"event_019",
+			"event_020"
+		],
+		"slack_messages": [
+			"slack_005",
+			"slack_006",
+			"slack_007",
+			"slack_008",
+			"slack_009",
+			"slack_010",
+			"slack_011",
+			"slack_012",
+			"slack_013",
+			"slack_014",
+			"slack_015",
+			"slack_016",
+			"slack_017",
+			"slack_018",
+			"slack_019",
+			"slack_020"
+		],
+		"kanban_tasks": [
+			"task_005",
+			"task_006",
+			"task_007",
+			"task_008",
+			"task_009",
+			"task_010",
+			"task_011",
+			"task_012",
+			"task_013",
+			"task_014",
+			"task_015",
+			"task_016",
+			"task_017",
+			"task_018",
+			"task_019",
+			"task_020"
+		],
+		"github_commits": [
+			"commit_003",
+			"commit_004",
+			"commit_005",
+			"commit_006",
+			"commit_007",
+			"commit_008"
+		],
+		"github_pull_requests": ["pr_003", "pr_004"],
+		"github_issues": ["issue_003"]
+	},
+	"expected_priorities": {
+		"p0_themes": [
+			"security",
+			"breach",
+			"urgent",
+			"critical",
+			"performance",
+			"production",
+			"degradation",
+			"timeout"
+		],
+		"p1_themes": [
+			"roadmap",
+			"planning",
+			"review",
+			"architecture",
+			"performance",
+			"annual",
+			"deadline"
+		]
+	},
+	"data_summary": {
+		"total_emails": 20,
+		"total_events": 20,
+		"total_slack_messages": 20,
+		"total_kanban_tasks": 20,
+		"total_github_commits": 8,
+		"total_github_prs": 4,
+		"total_github_issues": 3,
+		"important_ratio": 0.2,
+		"noise_ratio": 0.8
+	}
+}

@@ -21,6 +21,8 @@ load_dotenv()
 
 # Suppress warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore", message=".*Event loop is closed.*")
+warnings.filterwarnings("ignore", message=".*Exception ignored.*")
 logging.getLogger("mcp_use").setLevel(logging.ERROR)
 
 class OOOSummarizerAgent:
@@ -164,16 +166,33 @@ class OOOSummarizerAgent:
             print(f"❌ Error during report generation: {e}")
             raise
         finally:
-            # Clean up MCP sessions
+            # Clean up MCP sessions with proper error handling
             try:
-                await self.mcp_client.close_all_sessions()
+                if hasattr(self, 'mcp_client') and self.mcp_client:
+                    await self.mcp_client.close_all_sessions()
             except Exception as e:
-                print(f"⚠️ Warning during cleanup: {e}")
+                # Don't print warnings for expected cleanup errors
+                if "Event loop is closed" not in str(e) and "CancelledError" not in str(e):
+                    print(f"⚠️ Warning during cleanup: {e}")
 
 async def main():
     """Main function"""
     agent = OOOSummarizerAgent()
-    await agent.generate_report()
+    try:
+        await agent.generate_report()
+    except asyncio.CancelledError:
+        # Handle cancellation gracefully
+        pass
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\n⚠️ Interrupted by user")
+    except Exception as e:
+        print(f"❌ Error: {e}")
+    finally:
+        # Note: Asyncio subprocess cleanup errors may appear after this point
+        # These are harmless warnings that occur during garbage collection.
+        # For clean output, use: python run_agent.py
+        pass

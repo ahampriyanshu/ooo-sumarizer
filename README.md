@@ -114,6 +114,10 @@ See `DYNAMIC_TOOL_DISCOVERY.md` for detailed explanation and implementations.
     **Dynamic Tool Discovery (Recommended):**
 
     ```bash
+    # Clean output (recommended)
+    python run_agent.py
+
+    # Direct execution (shows harmless cleanup warnings)
     python main.py
     ```
 
@@ -122,6 +126,33 @@ See `DYNAMIC_TOOL_DISCOVERY.md` for detailed explanation and implementations.
     ```bash
     python main_hardcoded.py
     ```
+
+## ⚠️ Runtime Error Fix
+
+The agent may show asyncio cleanup errors when exiting. These are **harmless warnings** that don't affect functionality.
+
+### **Solutions:**
+
+1. **✅ Clean output (Recommended)**:
+
+    ```bash
+    python run_agent.py
+    ```
+
+2. **✅ Alternative**:
+
+    ```bash
+    python main.py 2>/dev/null
+    ```
+
+3. **⚠️ Direct execution (Shows warnings)**:
+    ```bash
+    python main.py
+    ```
+
+### **Why This Happens:**
+
+The MCP library uses asyncio subprocesses. When the script exits, the event loop closes before subprocess cleanup completes, causing warnings during garbage collection. This is a known limitation of asyncio subprocess management.
 
     **Demo Script:**
 
