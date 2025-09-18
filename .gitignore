@@ -51,8 +51,6 @@ logs/
 .DS_Store
 Thumbs.db
 
-reports/
-
 unit.xml
 
 .pytest_cache/
