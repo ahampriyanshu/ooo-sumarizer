@@ -16,7 +16,7 @@ mcp = FastMCP("slack-server")
 @mcp.tool()
 def get_messages(start_date: str, end_date: str, channel: Optional[str] = None) -> str:
     """Get Slack messages for a specific date range"""
-    conn = sqlite3.connect("/Users/karan/hr/ai-agents/ooo-summariser/data/databases/slack.db")
+    conn = sqlite3.connect("data/databases/slack.db")
     cursor = conn.cursor()
     
     query = """
@@ -54,7 +54,7 @@ def get_messages(start_date: str, end_date: str, channel: Optional[str] = None) 
 @mcp.tool()
 def get_mentions(start_date: str, end_date: str) -> str:
     """Get messages where the user was mentioned"""
-    conn = sqlite3.connect("/Users/karan/hr/ai-agents/ooo-summariser/data/databases/slack.db")
+    conn = sqlite3.connect("data/databases/slack.db")
     cursor = conn.cursor()
     
     query = """

@@ -15,7 +15,7 @@ mcp = FastMCP("email-server")
 @mcp.tool()
 def get_emails(start_date: str, end_date: str, limit: int = 50) -> str:
     """Get emails for a specific date range"""
-    conn = sqlite3.connect("/Users/karan/hr/ai-agents/ooo-summariser/data/databases/emails.db")
+    conn = sqlite3.connect("data/databases/emails.db")
     cursor = conn.cursor()
     
     query = """
@@ -48,7 +48,7 @@ def get_emails(start_date: str, end_date: str, limit: int = 50) -> str:
 @mcp.tool()
 def get_meeting_requests(start_date: str, end_date: str) -> str:
     """Get meeting requests and calendar invites"""
-    conn = sqlite3.connect("/Users/karan/hr/ai-agents/ooo-summariser/data/databases/emails.db")
+    conn = sqlite3.connect("data/databases/emails.db")
     cursor = conn.cursor()
     
     query = """
@@ -82,7 +82,7 @@ def get_meeting_requests(start_date: str, end_date: str) -> str:
 @mcp.tool()
 def get_important_emails(start_date: str, end_date: str) -> str:
     """Get emails marked as important or from key contacts"""
-    conn = sqlite3.connect("/Users/karan/hr/ai-agents/ooo-summariser/data/databases/emails.db")
+    conn = sqlite3.connect("data/databases/emails.db")
     cursor = conn.cursor()
     
     query = """
