@@ -136,91 +136,93 @@ def create_calendar_database():
     
     # Create calendar table if it doesn't exist
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS calendar_events (
+        CREATE TABLE IF NOT EXISTS events (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             custom_id TEXT UNIQUE,
             title TEXT NOT NULL,
-            description TEXT NOT NULL,
-            start_date TEXT NOT NULL,
-            end_date TEXT NOT NULL,
+            description TEXT,
+            start_time TEXT NOT NULL,
+            end_time TEXT NOT NULL,
             location TEXT,
             attendees TEXT,
+            event_type TEXT DEFAULT 'meeting',
             is_all_day BOOLEAN DEFAULT 0,
-            event_type TEXT DEFAULT 'meeting'
+            reminder_set BOOLEAN DEFAULT 1,
+            project_name TEXT
         )
     """)
     
     # Important calendar events (20% of total - 12 out of 60)
     important_events = [
         # Critical security and system events
-        ("event_021", "Security Vulnerability Patch Deployment", "Critical security patch deployment for authentication system vulnerability. Immediate action required.", "2024-02-05 14:00:00", "2024-02-05 16:00:00", "Conference Room A", "security@company.com,cto@company.com,devops@company.com", 0, "critical"),
-        ("event_025", "Q1 Strategic Planning Session", "Critical Q1 strategic planning session for key business decisions and roadmap alignment.", "2024-02-07 14:00:00", "2024-02-07 16:00:00", "Boardroom", "ceo@company.com,managers@company.com,architects@company.com", 0, "strategic"),
-        ("event_027", "Q1 Budget Approval Meeting", "Approve Q1 budget for business operations and resource allocation.", "2024-02-09 10:00:00", "2024-02-09 11:00:00", "Conference Room B", "finance@company.com,ceo@company.com,managers@company.com", 0, "financial"),
-        ("event_028", "Security Audit Preparation", "Prepare for annual security audit. Documentation review and system access verification.", "2024-02-11 10:00:00", "2024-02-11 13:00:00", "Security Office", "security@company.com,compliance@company.com,it@company.com", 0, "compliance"),
+        ("event_021", "Security Vulnerability Patch Deployment", "Critical security patch deployment for authentication system vulnerability. Immediate action required.", "2024-02-05 14:00:00", "2024-02-05 16:00:00", "Conference Room A", "security@company.com,cto@company.com,devops@company.com", "critical", "Security Project"),
+        ("event_025", "Q1 Strategic Planning Session", "Critical Q1 strategic planning session for key business decisions and roadmap alignment.", "2024-02-07 14:00:00", "2024-02-07 16:00:00", "Boardroom", "ceo@company.com,managers@company.com,architects@company.com", "strategic", "Q1 Planning"),
+        ("event_027", "Q1 Budget Approval Meeting", "Approve Q1 budget for business operations and resource allocation.", "2024-02-09 10:00:00", "2024-02-09 11:00:00", "Conference Room B", "finance@company.com,ceo@company.com,managers@company.com", "financial", "Q1 Planning"),
+        ("event_028", "Security Audit Preparation", "Prepare for annual security audit. Documentation review and system access verification.", "2024-02-11 10:00:00", "2024-02-11 13:00:00", "Security Office", "security@company.com,compliance@company.com,it@company.com", "compliance", "Security Project"),
         
         # Customer and business critical events
-        ("event_029", "Critical Customer Issue Resolution", "Resolve major customer system outage. Technical expertise required.", "2024-02-12 09:00:00", "2024-02-12 11:00:00", "War Room", "support@company.com,devops@company.com,cto@company.com", 0, "critical"),
-        ("event_030", "Enterprise Deal Closing", "Major enterprise deal closing requires technical consultation and approval.", "2024-02-14 11:00:00", "2024-02-14 12:30:00", "Executive Conference Room", "sales@company.com,ceo@company.com,legal@company.com", 0, "business"),
-        ("event_031", "Infrastructure Migration", "Critical infrastructure migration requires oversight and technical guidance.", "2024-02-13 20:00:00", "2024-02-14 02:00:00", "Data Center", "devops@company.com,operations@company.com,dev-team@company.com", 0, "technical"),
-        ("event_032", "Product Launch Approval", "Final approval for major product launch. Go/no-go decision required.", "2024-02-13 15:00:00", "2024-02-13 16:00:00", "Product Office", "product@company.com,managers@company.com,qa@company.com", 0, "product"),
+        ("event_029", "Critical Customer Issue Resolution", "Resolve major customer system outage. Technical expertise required.", "2024-02-12 09:00:00", "2024-02-12 11:00:00", "War Room", "support@company.com,devops@company.com,cto@company.com", "critical", "Security Project"),
+        ("event_030", "Enterprise Deal Closing", "Major enterprise deal closing requires technical consultation and approval.", "2024-02-14 11:00:00", "2024-02-14 12:30:00", "Executive Conference Room", "sales@company.com,ceo@company.com,legal@company.com", "business", "Customer Success"),
+        ("event_031", "Infrastructure Migration", "Critical infrastructure migration requires oversight and technical guidance.", "2024-02-13 20:00:00", "2024-02-14 02:00:00", "Data Center", "devops@company.com,operations@company.com,dev-team@company.com", "technical", "Infrastructure"),
+        ("event_032", "Product Launch Approval", "Final approval for major product launch. Go/no-go decision required.", "2024-02-13 15:00:00", "2024-02-13 16:00:00", "Product Office", "product@company.com,managers@company.com,qa@company.com", "product", "Product Development"),
         
         # Q1 Planning and Performance
         ("event_033", "Q1 Product Roadmap Review", "Review and approve Q1 product roadmap. Strategic alignment session.", "2024-02-07 14:00:00", "2024-02-07 16:00:00", "Product Conference Room", "product@company.com,architects@company.com,managers@company.com", 0, "strategic"),
-        ("event_034", "Annual Performance Review", "Annual performance review deadline. Submit self-assessment and manager review.", "2024-02-14 14:00:00", "2024-02-14 15:00:00", "HR Office", "hr@company.com,managers@company.com", 0, "hr"),
-        ("event_035", "Database Performance Optimization", "Database performance optimization project review and approval.", "2024-02-08 15:00:00", "2024-02-08 16:30:00", "Tech Lab", "database@company.com,devops@company.com,architects@company.com", 0, "technical"),
-        ("event_036", "Production System Maintenance", "Production system maintenance window. Downtime approval required.", "2024-02-06 02:00:00", "2024-02-06 06:00:00", "Operations Center", "operations@company.com,devops@company.com,cto@company.com", 0, "maintenance"),
+        ("event_034", "Annual Performance Review", "Annual performance review deadline. Submit self-assessment and manager review.", "2024-02-14 14:00:00", "2024-02-14 15:00:00", "HR Office", "hr@company.com,managers@company.com", "hr", "HR Operations"),
+        ("event_035", "Database Performance Optimization", "Database performance optimization project review and approval.", "2024-02-08 15:00:00", "2024-02-08 16:30:00", "Tech Lab", "database@company.com,devops@company.com,architects@company.com", "technical", "Infrastructure"),
+        ("event_036", "Production System Maintenance", "Production system maintenance window. Downtime approval required.", "2024-02-06 02:00:00", "2024-02-06 06:00:00", "Operations Center", "operations@company.com,devops@company.com,cto@company.com", "maintenance", "System Maintenance"),
     ]
     
     # Noise calendar events (80% of total - 48 out of 60)
     noise_events = [
         # Regular meetings and training
-        ("event_037", "Weekly Team Standup", "Regular weekly team standup meeting.", "2024-02-01 09:00:00", "2024-02-01 09:30:00", "Team Room", "team@company.com", 0, "meeting"),
-        ("event_038", "New Employee Onboarding", "Welcome new team members with onboarding session.", "2024-02-01 10:00:00", "2024-02-01 12:00:00", "Training Room", "hr@company.com,new-employees@company.com", 0, "training"),
-        ("event_039", "Marketing Campaign Review", "Review current marketing campaigns and performance metrics.", "2024-02-01 14:00:00", "2024-02-01 15:00:00", "Marketing Office", "marketing@company.com", 0, "meeting"),
-        ("event_040", "Customer Support Training", "Customer support team training session.", "2024-02-02 10:00:00", "2024-02-02 12:00:00", "Training Room", "support@company.com", 0, "training"),
-        ("event_041", "Sales Team Meeting", "Weekly sales team meeting and pipeline review.", "2024-02-02 14:00:00", "2024-02-02 15:00:00", "Sales Office", "sales@company.com", 0, "meeting"),
-        ("event_042", "IT Security Awareness", "IT security awareness training for all employees.", "2024-02-03 11:00:00", "2024-02-03 12:00:00", "Auditorium", "it@company.com,all@company.com", 0, "training"),
-        ("event_043", "Project Status Update", "Weekly project status update meeting.", "2024-02-03 15:00:00", "2024-02-03 16:00:00", "Project Room", "project@company.com", 0, "meeting"),
-        ("event_044", "Skills Development Workshop", "Professional skills development workshop.", "2024-02-04 09:00:00", "2024-02-04 12:00:00", "Training Room", "hr@company.com", 0, "training"),
-        ("event_045", "Budget Planning Session", "Plan budget allocation for next quarter.", "2024-02-04 14:00:00", "2024-02-04 16:00:00", "Finance Office", "finance@company.com", 0, "meeting"),
-        ("event_046", "Team Building Activity", "Monthly team building activity and games.", "2024-02-05 16:00:00", "2024-02-05 18:00:00", "Recreation Room", "hr@company.com", 0, "social"),
+        ("event_037", "Weekly Team Standup", "Regular weekly team standup meeting.", "2024-02-01 09:00:00", "2024-02-01 09:30:00", "Team Room", "team@company.com", "meeting", "General"),
+        ("event_038", "New Employee Onboarding", "Welcome new team members with onboarding session.", "2024-02-01 10:00:00", "2024-02-01 12:00:00", "Training Room", "hr@company.com,new-employees@company.com", "training", "HR Operations"),
+        ("event_039", "Marketing Campaign Review", "Review current marketing campaigns and performance metrics.", "2024-02-01 14:00:00", "2024-02-01 15:00:00", "Marketing Office", "marketing@company.com", "meeting", "General"),
+        ("event_040", "Customer Support Training", "Customer support team training session.", "2024-02-02 10:00:00", "2024-02-02 12:00:00", "Training Room", "support@company.com", "training", "HR Operations"),
+        ("event_041", "Sales Team Meeting", "Weekly sales team meeting and pipeline review.", "2024-02-02 14:00:00", "2024-02-02 15:00:00", "Sales Office", "sales@company.com", "meeting", "General"),
+        ("event_042", "IT Security Awareness", "IT security awareness training for all employees.", "2024-02-03 11:00:00", "2024-02-03 12:00:00", "Auditorium", "it@company.com,all@company.com", "training", "HR Operations"),
+        ("event_043", "Project Status Update", "Weekly project status update meeting.", "2024-02-03 15:00:00", "2024-02-03 16:00:00", "Project Room", "project@company.com", "meeting", "General"),
+        ("event_044", "Skills Development Workshop", "Professional skills development workshop.", "2024-02-04 09:00:00", "2024-02-04 12:00:00", "Training Room", "hr@company.com", "training", "HR Operations"),
+        ("event_045", "Budget Planning Session", "Plan budget allocation for next quarter.", "2024-02-04 14:00:00", "2024-02-04 16:00:00", "Finance Office", "finance@company.com", "meeting", "General"),
+        ("event_046", "Team Building Activity", "Monthly team building activity and games.", "2024-02-05 16:00:00", "2024-02-05 18:00:00", "Recreation Room", "hr@company.com", "social", "Team Building"),
         
         # Valentine's Day themed events
-        ("event_047", "Valentine's Day Office Decorations", "Decorate the office for Valentine's Day celebration.", "2024-02-09 12:00:00", "2024-02-09 13:00:00", "Main Office", "events@company.com", 0, "social"),
-        ("event_048", "Valentine's Day Gift Exchange", "Valentine's Day gift exchange and celebration.", "2024-02-14 16:00:00", "2024-02-14 18:00:00", "Main Office", "events@company.com,all@company.com", 0, "social"),
-        ("event_049", "Valentine's Day Lunch", "Special Valentine's Day lunch for all employees.", "2024-02-14 12:00:00", "2024-02-14 13:00:00", "Cafeteria", "catering@company.com,all@company.com", 0, "social"),
+        ("event_047", "Valentine's Day Office Decorations", "Decorate the office for Valentine's Day celebration.", "2024-02-09 12:00:00", "2024-02-09 13:00:00", "Main Office", "events@company.com", "social", "Team Building"),
+        ("event_048", "Valentine's Day Gift Exchange", "Valentine's Day gift exchange and celebration.", "2024-02-14 16:00:00", "2024-02-14 18:00:00", "Main Office", "events@company.com,all@company.com", "social", "Team Building"),
+        ("event_049", "Valentine's Day Lunch", "Special Valentine's Day lunch for all employees.", "2024-02-14 12:00:00", "2024-02-14 13:00:00", "Cafeteria", "catering@company.com,all@company.com", "social", "Team Building"),
         
         # More regular meetings and events
-        ("event_050", "Weekly All-Hands Meeting", "Weekly all-hands meeting with company updates.", "2024-02-06 10:00:00", "2024-02-06 11:00:00", "Auditorium", "all@company.com", 0, "meeting"),
-        ("event_051", "Code Review Session", "Weekly code review session for development team.", "2024-02-06 15:00:00", "2024-02-06 16:00:00", "Dev Room", "dev-team@company.com", 0, "meeting"),
-        ("event_052", "Customer Feedback Review", "Review customer feedback and improvement suggestions.", "2024-02-07 10:00:00", "2024-02-07 11:00:00", "Product Office", "product@company.com", 0, "meeting"),
-        ("event_053", "Vendor Meeting", "Monthly vendor meeting and contract review.", "2024-02-07 15:00:00", "2024-02-07 16:00:00", "Procurement Office", "procurement@company.com", 0, "meeting"),
-        ("event_054", "Quality Assurance Review", "Quality assurance review and testing updates.", "2024-02-08 10:00:00", "2024-02-08 11:00:00", "QA Office", "qa@company.com", 0, "meeting"),
-        ("event_055", "Operations Review", "Weekly operations review and performance metrics.", "2024-02-08 14:00:00", "2024-02-08 15:00:00", "Operations Center", "operations@company.com", 0, "meeting"),
-        ("event_056", "Research and Development", "R&D team meeting and innovation discussion.", "2024-02-09 10:00:00", "2024-02-09 12:00:00", "R&D Lab", "research@company.com", 0, "meeting"),
-        ("event_057", "Compliance Training", "Monthly compliance training session.", "2024-02-09 14:00:00", "2024-02-09 15:00:00", "Training Room", "compliance@company.com", 0, "training"),
-        ("event_058", "Customer Success Meeting", "Customer success team meeting and case review.", "2024-02-10 10:00:00", "2024-02-10 11:00:00", "Customer Success Office", "customer-success@company.com", 0, "meeting"),
-        ("event_059", "Marketing Strategy Session", "Marketing strategy session and campaign planning.", "2024-02-10 14:00:00", "2024-02-10 16:00:00", "Marketing Office", "marketing@company.com", 0, "meeting"),
-        ("event_060", "Technology Review", "Technology review and architecture discussion.", "2024-02-11 15:00:00", "2024-02-11 16:00:00", "Tech Lab", "architects@company.com", 0, "meeting"),
-        ("event_061", "Employee Recognition", "Monthly employee recognition and awards ceremony.", "2024-02-12 11:00:00", "2024-02-12 12:00:00", "Auditorium", "hr@company.com,all@company.com", 0, "celebration"),
-        ("event_062", "Innovation Lab Tour", "Innovation lab tour and prototype demonstration.", "2024-02-12 15:00:00", "2024-02-12 16:00:00", "Innovation Lab", "innovation@company.com", 0, "tour"),
-        ("event_063", "Sustainability Workshop", "Sustainability workshop and green initiative discussion.", "2024-02-13 10:00:00", "2024-02-13 12:00:00", "Training Room", "sustainability@company.com", 0, "workshop"),
-        ("event_064", "Diversity and Inclusion", "Diversity and inclusion workshop and discussion.", "2024-02-13 14:00:00", "2024-02-13 16:00:00", "Training Room", "diversity@company.com", 0, "workshop"),
-        ("event_065", "Mentorship Program", "Mentorship program kickoff and pairing session.", "2024-02-14 09:00:00", "2024-02-14 10:00:00", "Training Room", "hr@company.com", 0, "training"),
-        ("event_066", "Volunteer Opportunities", "Volunteer opportunities presentation and sign-up.", "2024-02-14 13:00:00", "2024-02-14 14:00:00", "Community Room", "volunteer@company.com", 0, "presentation"),
+        ("event_050", "Weekly All-Hands Meeting", "Weekly all-hands meeting with company updates.", "2024-02-06 10:00:00", "2024-02-06 11:00:00", "Auditorium", "all@company.com", "meeting", "General"),
+        ("event_051", "Code Review Session", "Weekly code review session for development team.", "2024-02-06 15:00:00", "2024-02-06 16:00:00", "Dev Room", "dev-team@company.com", "meeting", "General"),
+        ("event_052", "Customer Feedback Review", "Review customer feedback and improvement suggestions.", "2024-02-07 10:00:00", "2024-02-07 11:00:00", "Product Office", "product@company.com", "meeting", "General"),
+        ("event_053", "Vendor Meeting", "Monthly vendor meeting and contract review.", "2024-02-07 15:00:00", "2024-02-07 16:00:00", "Procurement Office", "procurement@company.com", "meeting", "General"),
+        ("event_054", "Quality Assurance Review", "Quality assurance review and testing updates.", "2024-02-08 10:00:00", "2024-02-08 11:00:00", "QA Office", "qa@company.com", "meeting", "General"),
+        ("event_055", "Operations Review", "Weekly operations review and performance metrics.", "2024-02-08 14:00:00", "2024-02-08 15:00:00", "Operations Center", "operations@company.com", "meeting", "General"),
+        ("event_056", "Research and Development", "R&D team meeting and innovation discussion.", "2024-02-09 10:00:00", "2024-02-09 12:00:00", "R&D Lab", "research@company.com", "meeting", "General"),
+        ("event_057", "Compliance Training", "Monthly compliance training session.", "2024-02-09 14:00:00", "2024-02-09 15:00:00", "Training Room", "compliance@company.com", "training", "HR Operations"),
+        ("event_058", "Customer Success Meeting", "Customer success team meeting and case review.", "2024-02-10 10:00:00", "2024-02-10 11:00:00", "Customer Success Office", "customer-success@company.com", "meeting", "General"),
+        ("event_059", "Marketing Strategy Session", "Marketing strategy session and campaign planning.", "2024-02-10 14:00:00", "2024-02-10 16:00:00", "Marketing Office", "marketing@company.com", "meeting", "General"),
+        ("event_060", "Technology Review", "Technology review and architecture discussion.", "2024-02-11 15:00:00", "2024-02-11 16:00:00", "Tech Lab", "architects@company.com", "meeting", "General"),
+        ("event_061", "Employee Recognition", "Monthly employee recognition and awards ceremony.", "2024-02-12 11:00:00", "2024-02-12 12:00:00", "Auditorium", "hr@company.com,all@company.com", "celebration", "Team Building"),
+        ("event_062", "Innovation Lab Tour", "Innovation lab tour and prototype demonstration.", "2024-02-12 15:00:00", "2024-02-12 16:00:00", "Innovation Lab", "innovation@company.com", "tour", "General"),
+        ("event_063", "Sustainability Workshop", "Sustainability workshop and green initiative discussion.", "2024-02-13 10:00:00", "2024-02-13 12:00:00", "Training Room", "sustainability@company.com", "workshop", "Training"),
+        ("event_064", "Diversity and Inclusion", "Diversity and inclusion workshop and discussion.", "2024-02-13 14:00:00", "2024-02-13 16:00:00", "Training Room", "diversity@company.com", "workshop", "Training"),
+        ("event_065", "Mentorship Program", "Mentorship program kickoff and pairing session.", "2024-02-14 09:00:00", "2024-02-14 10:00:00", "Training Room", "hr@company.com", "training", "HR Operations"),
+        ("event_066", "Volunteer Opportunities", "Volunteer opportunities presentation and sign-up.", "2024-02-14 13:00:00", "2024-02-14 14:00:00", "Community Room", "volunteer@company.com", "presentation", "General"),
     ]
     
     # Insert important events
     for event in important_events:
         cursor.execute("""
-            INSERT OR IGNORE INTO calendar_events (custom_id, title, description, start_date, end_date, location, attendees, is_all_day, event_type)
+            INSERT OR IGNORE INTO events (custom_id, title, description, start_time, end_time, location, attendees, event_type, project_name)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, event)
     
     # Insert noise events
     for event in noise_events:
         cursor.execute("""
-            INSERT OR IGNORE INTO calendar_events (custom_id, title, description, start_date, end_date, location, attendees, is_all_day, event_type)
+            INSERT OR IGNORE INTO events (custom_id, title, description, start_time, end_time, location, attendees, event_type, project_name)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, event)
     
@@ -234,7 +236,7 @@ def create_slack_database():
     
     # Create slack_messages table if it doesn't exist
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS slack_messages (
+        CREATE TABLE IF NOT EXISTS messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             custom_id TEXT UNIQUE,
             channel TEXT NOT NULL,
@@ -250,115 +252,115 @@ def create_slack_database():
     # Important Slack messages (20% of total - 20 out of 100)
     important_messages = [
         # Critical security and system messages
-        ("slack_021", "#security", "security-bot", "URGENT: Critical security vulnerability in auth system. Patch deployment required by Feb 5th.", "2024-02-05 09:00:00", None, 1, "cto@company.com,devops@company.com"),
-        ("slack_030", "#incidents", "support-lead", "Critical customer issue - system outage. Your technical expertise needed for resolution.", "2024-02-12 08:00:00", None, 1, "devops@company.com,cto@company.com"),
-        ("slack_043", "#enterprise-deals", "sales-director", "Enterprise deal closing Feb 14th. Technical consultation and approval required.", "2024-02-14 10:00:00", None, 1, "ceo@company.com,legal@company.com"),
-        ("slack_110", "#infrastructure", "devops-lead", "Infrastructure migration Feb 13th. Your oversight and technical guidance required.", "2024-02-13 08:30:00", None, 1, "operations@company.com,dev-team@company.com"),
+        ("slack_021", "#security", "security-bot", "URGENT: Critical security vulnerability in auth system. Patch deployment required by Feb 5th.", "2024-02-05 09:00:00", 1, None),
+        ("slack_030", "#incidents", "support-lead", "Critical customer issue - system outage. Your technical expertise needed for resolution.", "2024-02-12 08:00:00", 1, None),
+        ("slack_043", "#enterprise-deals", "sales-director", "Enterprise deal closing Feb 14th. Technical consultation and approval required.", "2024-02-14 10:00:00", 1, None),
+        ("slack_110", "#infrastructure", "devops-lead", "Infrastructure migration Feb 13th. Your oversight and technical guidance required.", "2024-02-13 08:30:00", 1, None),
         
         # Q1 Planning and Budget
-        ("slack_031", "#q1-planning", "product-manager", "Q1 strategic planning session Feb 7th. Critical business decisions to be made.", "2024-02-06 15:00:00", None, 1, "ceo@company.com,managers@company.com"),
-        ("slack_032", "#budget", "finance-director", "Q1 budget approval required Feb 9th. Critical for business operations.", "2024-02-08 14:00:00", None, 1, "ceo@company.com,managers@company.com"),
-        ("slack_033", "#roadmap", "product-lead", "Q1 product roadmap review Feb 7th. Strategic alignment session.", "2024-02-06 16:00:00", None, 1, "architects@company.com,managers@company.com"),
+        ("slack_031", "#q1-planning", "product-manager", "Q1 strategic planning session Feb 7th. Critical business decisions to be made.", "2024-02-06 15:00:00", 1, None),
+        ("slack_032", "#budget", "finance-director", "Q1 budget approval required Feb 9th. Critical for business operations.", "2024-02-08 14:00:00", 1, None),
+        ("slack_033", "#roadmap", "product-lead", "Q1 product roadmap review Feb 7th. Strategic alignment session.", "2024-02-06 16:00:00", 1, None),
         
         # Security and Compliance
-        ("slack_034", "#compliance", "compliance-officer", "Security audit preparation Feb 11th. Documentation review required.", "2024-02-09 11:00:00", None, 1, "security@company.com,it@company.com"),
-        ("slack_035", "#legal", "legal-counsel", "Major client contract renewal deadline Feb 10th. Legal review required.", "2024-02-08 10:30:00", None, 1, "ceo@company.com,sales@company.com"),
-        ("slack_036", "#performance", "hr-director", "Annual performance review deadline Feb 14th. Submit self-assessment.", "2024-02-13 10:00:00", None, 1, "managers@company.com"),
+        ("slack_034", "#compliance", "compliance-officer", "Security audit preparation Feb 11th. Documentation review required.", "2024-02-09 11:00:00", 1, None),
+        ("slack_035", "#legal", "legal-counsel", "Major client contract renewal deadline Feb 10th. Legal review required.", "2024-02-08 10:30:00", 1, None),
+        ("slack_036", "#performance", "hr-director", "Annual performance review deadline Feb 14th. Submit self-assessment.", "2024-02-13 10:00:00", 1, None),
         
         # System Maintenance
-        ("slack_037", "#operations", "ops-manager", "Production system maintenance Feb 6th. Downtime approval required.", "2024-02-05 16:00:00", None, 1, "devops@company.com,cto@company.com"),
-        ("slack_038", "#database", "db-admin", "Database performance optimization Feb 8th. Technical review required.", "2024-02-07 11:00:00", None, 1, "devops@company.com,architects@company.com"),
-        ("slack_039", "#releases", "qa-lead", "Release testing Feb 14th. Approval required before production deployment.", "2024-02-14 09:00:00", None, 1, "dev-team@company.com,product@company.com"),
-        ("slack_040", "#security-incidents", "security-lead", "Security incident response Feb 14th. Immediate technical expertise required.", "2024-02-14 12:00:00", None, 1, "cto@company.com,operations@company.com"),
+        ("slack_037", "#operations", "ops-manager", "Production system maintenance Feb 6th. Downtime approval required.", "2024-02-05 16:00:00", 1, None),
+        ("slack_038", "#database", "db-admin", "Database performance optimization Feb 8th. Technical review required.", "2024-02-07 11:00:00", 1, None),
+        ("slack_039", "#releases", "qa-lead", "Release testing Feb 14th. Approval required before production deployment.", "2024-02-14 09:00:00", 1, None),
+        ("slack_040", "#security-incidents", "security-lead", "Security incident response Feb 14th. Immediate technical expertise required.", "2024-02-14 12:00:00", 1, None),
         
         # Valentine's Day Context
-        ("slack_041", "#events", "events-coordinator", "Valentine's Day team building event Feb 14th. Your participation encouraged.", "2024-02-12 14:00:00", None, 0, "all@company.com"),
-        ("slack_042", "#marketing", "marketing-manager", "Valentine's Day campaign launch Feb 13th. Approval required.", "2024-02-12 13:00:00", None, 1, "product@company.com,managers@company.com"),
+        ("slack_041", "#events", "events-coordinator", "Valentine's Day team building event Feb 14th. Your participation encouraged.", "2024-02-12 14:00:00", 0, None),
+        ("slack_042", "#marketing", "marketing-manager", "Valentine's Day campaign launch Feb 13th. Approval required.", "2024-02-12 13:00:00", 1, None),
         
         # Additional Critical Items
-        ("slack_043", "#customer-success", "customer-success-manager", "Major customer escalation. Immediate attention required.", "2024-02-11 15:00:00", None, 1, "support@company.com,cto@company.com"),
-        ("slack_044", "#product-launch", "product-manager", "Product launch approval Feb 13th. Go/no-go decision required.", "2024-02-13 15:00:00", None, 1, "managers@company.com,qa@company.com"),
-        ("slack_045", "#quarterly-review", "compliance-officer", "Quarterly compliance review due Feb 15th. Documentation update required.", "2024-02-12 09:00:00", None, 1, "legal@company.com,all@company.com"),
-        ("slack_046", "#innovation", "innovation-lead", "Innovation lab prototype review. Technical evaluation required.", "2024-02-12 10:00:00", None, 1, "architects@company.com,product@company.com"),
+        ("slack_043", "#customer-success", "customer-success-manager", "Major customer escalation. Immediate attention required.", "2024-02-11 15:00:00", 1, None),
+        ("slack_044", "#product-launch", "product-manager", "Product launch approval Feb 13th. Go/no-go decision required.", "2024-02-13 15:00:00", 1, None),
+        ("slack_045", "#quarterly-review", "compliance-officer", "Quarterly compliance review due Feb 15th. Documentation update required.", "2024-02-12 09:00:00", 1, None),
+        ("slack_046", "#innovation", "innovation-lead", "Innovation lab prototype review. Technical evaluation required.", "2024-02-12 10:00:00", 1, None),
     ]
     
     # Noise Slack messages (80% of total - 80 out of 100)
     noise_messages = [
         # Regular team communication
-        ("slack_047", "#general", "team-member-1", "Good morning team! Ready for another productive day.", "2024-02-01 08:00:00", None, 0, None),
-        ("slack_048", "#random", "team-member-2", "Anyone know where the coffee machine is?", "2024-02-01 08:30:00", None, 0, None),
-        ("slack_049", "#announcements", "hr-bot", "Welcome our new team members! Please introduce yourselves.", "2024-02-01 09:00:00", None, 0, "all@company.com"),
-        ("slack_050", "#tech-talk", "dev-1", "Just learned about this new framework. Anyone tried it?", "2024-02-01 10:00:00", None, 0, None),
-        ("slack_051", "#watercooler", "team-member-3", "Did anyone see the latest episode of that show?", "2024-02-01 12:00:00", None, 0, None),
-        ("slack_052", "#lunch", "team-member-4", "Lunch at the new restaurant today. Anyone want to join?", "2024-02-01 12:30:00", None, 0, None),
-        ("slack_053", "#feedback", "product-manager", "Thanks for the great feedback on the new feature!", "2024-02-01 15:00:00", None, 0, None),
-        ("slack_054", "#celebrations", "hr-bot", "Happy birthday to our February team members! 🎂", "2024-02-01 16:00:00", None, 0, "all@company.com"),
-        ("slack_055", "#office-updates", "admin-bot", "Office supplies have been restocked. Thanks for your patience!", "2024-02-02 09:00:00", None, 0, None),
-        ("slack_056", "#wellness", "wellness-coordinator", "Don't forget to take breaks and stay hydrated!", "2024-02-02 10:00:00", None, 0, "all@company.com"),
+        ("slack_047", "#general", "team-member-1", "Good morning team! Ready for another productive day.", "2024-02-01 08:00:00", 0, None),
+        ("slack_048", "#random", "team-member-2", "Anyone know where the coffee machine is?", "2024-02-01 08:30:00", 0, None),
+        ("slack_049", "#announcements", "hr-bot", "Welcome our new team members! Please introduce yourselves.", "2024-02-01 09:00:00", 0, None),
+        ("slack_050", "#tech-talk", "dev-1", "Just learned about this new framework. Anyone tried it?", "2024-02-01 10:00:00", 0, None),
+        ("slack_051", "#watercooler", "team-member-3", "Did anyone see the latest episode of that show?", "2024-02-01 12:00:00", 0, None),
+        ("slack_052", "#lunch", "team-member-4", "Lunch at the new restaurant today. Anyone want to join?", "2024-02-01 12:30:00", 0, None),
+        ("slack_053", "#feedback", "product-manager", "Thanks for the great feedback on the new feature!", "2024-02-01 15:00:00", 0, None),
+        ("slack_054", "#celebrations", "hr-bot", "Happy birthday to our February team members! 🎂", "2024-02-01 16:00:00", 0, None),
+        ("slack_055", "#office-updates", "admin-bot", "Office supplies have been restocked. Thanks for your patience!", "2024-02-02 09:00:00", 0, None),
+        ("slack_056", "#wellness", "wellness-coordinator", "Don't forget to take breaks and stay hydrated!", "2024-02-02 10:00:00", 0, None),
         
         # More noise messages to reach 80 total
-        ("slack_057", "#general", "team-member-5", "Great job on the project everyone!", "2024-02-02 11:00:00", None, 0, None),
-        ("slack_058", "#random", "team-member-6", "Weather is looking nice today!", "2024-02-02 12:00:00", None, 0, None),
-        ("slack_059", "#tech-talk", "dev-2", "Interesting article about AI trends.", "2024-02-02 14:00:00", None, 0, None),
-        ("slack_060", "#watercooler", "team-member-7", "Anyone have recommendations for good books?", "2024-02-02 15:00:00", None, 0, None),
-        ("slack_061", "#lunch", "team-member-8", "Pizza Friday! What's everyone's favorite topping?", "2024-02-02 16:00:00", None, 0, None),
-        ("slack_062", "#feedback", "customer-success", "Customer feedback has been great this week!", "2024-02-03 09:00:00", None, 0, None),
-        ("slack_063", "#celebrations", "team-member-9", "Congratulations on the work anniversary!", "2024-02-03 10:00:00", None, 0, None),
-        ("slack_064", "#office-updates", "facilities", "New plants have been added to the office!", "2024-02-03 11:00:00", None, 0, None),
-        ("slack_065", "#wellness", "fitness-coordinator", "Yoga session in the conference room at 5 PM!", "2024-02-03 16:00:00", None, 0, "all@company.com"),
-        ("slack_066", "#general", "team-member-10", "Have a great weekend everyone!", "2024-02-03 17:00:00", None, 0, None),
+        ("slack_057", "#general", "team-member-5", "Great job on the project everyone!", "2024-02-02 11:00:00", 0, None),
+        ("slack_058", "#random", "team-member-6", "Weather is looking nice today!", "2024-02-02 12:00:00", 0, None),
+        ("slack_059", "#tech-talk", "dev-2", "Interesting article about AI trends.", "2024-02-02 14:00:00", 0, None),
+        ("slack_060", "#watercooler", "team-member-7", "Anyone have recommendations for good books?", "2024-02-02 15:00:00", 0, None),
+        ("slack_061", "#lunch", "team-member-8", "Pizza Friday! What's everyone's favorite topping?", "2024-02-02 16:00:00", 0, None),
+        ("slack_062", "#feedback", "customer-success", "Customer feedback has been great this week!", "2024-02-03 09:00:00", 0, None),
+        ("slack_063", "#celebrations", "team-member-9", "Congratulations on the work anniversary!", "2024-02-03 10:00:00", 0, None),
+        ("slack_064", "#office-updates", "facilities", "New plants have been added to the office!", "2024-02-03 11:00:00", 0, None),
+        ("slack_065", "#wellness", "fitness-coordinator", "Yoga session in the conference room at 5 PM!", "2024-02-03 16:00:00", 0, None),
+        ("slack_066", "#general", "team-member-10", "Have a great weekend everyone!", "2024-02-03 17:00:00", 0, None),
         
         # Continue with more noise messages...
-        ("slack_067", "#random", "team-member-11", "Monday motivation! Let's make it a great week!", "2024-02-05 08:00:00", None, 0, None),
-        ("slack_068", "#tech-talk", "dev-3", "New coding challenge posted. Who's up for it?", "2024-02-05 10:00:00", None, 0, None),
-        ("slack_069", "#watercooler", "team-member-12", "Anyone tried the new coffee blend?", "2024-02-05 11:00:00", None, 0, None),
-        ("slack_070", "#lunch", "team-member-13", "Food truck is here! Great tacos today.", "2024-02-05 12:00:00", None, 0, None),
-        ("slack_071", "#feedback", "product-manager", "User testing results are in. Very positive!", "2024-02-05 14:00:00", None, 0, None),
-        ("slack_072", "#celebrations", "hr-bot", "Employee of the month announcement coming soon!", "2024-02-05 15:00:00", None, 0, "all@company.com"),
-        ("slack_073", "#office-updates", "admin-bot", "Parking permits expire at month-end. Renew online!", "2024-02-05 16:00:00", None, 0, None),
-        ("slack_074", "#wellness", "wellness-coordinator", "Mental health awareness session this Friday.", "2024-02-05 17:00:00", None, 0, "all@company.com"),
-        ("slack_075", "#general", "team-member-14", "Thanks for all the hard work this week!", "2024-02-05 18:00:00", None, 0, None),
-        ("slack_076", "#random", "team-member-15", "Weekend plans anyone?", "2024-02-05 18:30:00", None, 0, None),
+        ("slack_067", "#random", "team-member-11", "Monday motivation! Let's make it a great week!", "2024-02-05 08:00:00", 0, None),
+        ("slack_068", "#tech-talk", "dev-3", "New coding challenge posted. Who's up for it?", "2024-02-05 10:00:00", 0, None),
+        ("slack_069", "#watercooler", "team-member-12", "Anyone tried the new coffee blend?", "2024-02-05 11:00:00", 0, None),
+        ("slack_070", "#lunch", "team-member-13", "Food truck is here! Great tacos today.", "2024-02-05 12:00:00", 0, None),
+        ("slack_071", "#feedback", "product-manager", "User testing results are in. Very positive!", "2024-02-05 14:00:00", 0, None),
+        ("slack_072", "#celebrations", "hr-bot", "Employee of the month announcement coming soon!", "2024-02-05 15:00:00", 0, None),
+        ("slack_073", "#office-updates", "admin-bot", "Parking permits expire at month-end. Renew online!", "2024-02-05 16:00:00", 0, None),
+        ("slack_074", "#wellness", "wellness-coordinator", "Mental health awareness session this Friday.", "2024-02-05 17:00:00", 0, None),
+        ("slack_075", "#general", "team-member-14", "Thanks for all the hard work this week!", "2024-02-05 18:00:00", 0, None),
+        ("slack_076", "#random", "team-member-15", "Weekend plans anyone?", "2024-02-05 18:30:00", 0, None),
         
         # Continue with remaining noise messages to reach 80 total
-        ("slack_077", "#tech-talk", "dev-4", "Code review session went well!", "2024-02-06 09:00:00", None, 0, None),
-        ("slack_078", "#watercooler", "team-member-16", "Anyone watching the game tonight?", "2024-02-06 12:00:00", None, 0, None),
-        ("slack_079", "#lunch", "team-member-17", "Healthy lunch options in the cafeteria today!", "2024-02-06 12:30:00", None, 0, None),
-        ("slack_080", "#feedback", "customer-success", "Customer satisfaction scores are up!", "2024-02-06 15:00:00", None, 0, None),
-        ("slack_081", "#celebrations", "team-member-18", "Happy work anniversary!", "2024-02-06 16:00:00", None, 0, None),
-        ("slack_082", "#office-updates", "facilities", "New ergonomic chairs have arrived!", "2024-02-06 17:00:00", None, 0, None),
-        ("slack_083", "#wellness", "fitness-coordinator", "Walking group meeting at 5:30 PM!", "2024-02-06 17:30:00", None, 0, "all@company.com"),
-        ("slack_084", "#general", "team-member-19", "Great collaboration on the project!", "2024-02-07 08:00:00", None, 0, None),
-        ("slack_085", "#random", "team-member-20", "Coffee break anyone?", "2024-02-07 10:00:00", None, 0, None),
-        ("slack_086", "#tech-talk", "dev-5", "Interesting discussion about microservices!", "2024-02-07 11:00:00", None, 0, None),
-        ("slack_087", "#watercooler", "team-member-21", "Anyone have good podcast recommendations?", "2024-02-07 12:00:00", None, 0, None),
-        ("slack_088", "#lunch", "team-member-22", "Team lunch at the new restaurant!", "2024-02-07 12:30:00", None, 0, None),
-        ("slack_089", "#feedback", "product-manager", "Feature request summary is ready!", "2024-02-07 15:00:00", None, 0, None),
-        ("slack_090", "#celebrations", "hr-bot", "Team building event sign-up is open!", "2024-02-07 16:00:00", None, 0, "all@company.com"),
-        ("slack_091", "#office-updates", "admin-bot", "New printer setup in the copy room!", "2024-02-07 17:00:00", None, 0, None),
-        ("slack_092", "#wellness", "wellness-coordinator", "Stress management workshop this week!", "2024-02-07 17:30:00", None, 0, "all@company.com"),
-        ("slack_093", "#general", "team-member-23", "Thanks for the great teamwork!", "2024-02-08 08:00:00", None, 0, None),
-        ("slack_094", "#random", "team-member-24", "TGIF! Have a great weekend!", "2024-02-08 17:00:00", None, 0, None),
-        ("slack_095", "#tech-talk", "dev-6", "New development tools training next week!", "2024-02-09 09:00:00", None, 0, None),
-        ("slack_096", "#watercooler", "team-member-25", "Anyone tried the new restaurant downtown?", "2024-02-09 12:00:00", None, 0, None),
-        ("slack_097", "#lunch", "team-member-26", "Potluck lunch next Friday!", "2024-02-09 12:30:00", None, 0, None),
-        ("slack_098", "#feedback", "customer-success", "Customer testimonials are amazing!", "2024-02-09 15:00:00", None, 0, None),
-        ("slack_099", "#celebrations", "team-member-27", "Congratulations on the promotion!", "2024-02-09 16:00:00", None, 0, None),
-        ("slack_100", "#office-updates", "facilities", "Office renovation starting next month!", "2024-02-09 17:00:00", None, 0, None),
+        ("slack_077", "#tech-talk", "dev-4", "Code review session went well!", "2024-02-06 09:00:00", 0, None),
+        ("slack_078", "#watercooler", "team-member-16", "Anyone watching the game tonight?", "2024-02-06 12:00:00", 0, None),
+        ("slack_079", "#lunch", "team-member-17", "Healthy lunch options in the cafeteria today!", "2024-02-06 12:30:00", 0, None),
+        ("slack_080", "#feedback", "customer-success", "Customer satisfaction scores are up!", "2024-02-06 15:00:00", 0, None),
+        ("slack_081", "#celebrations", "team-member-18", "Happy work anniversary!", "2024-02-06 16:00:00", 0, None),
+        ("slack_082", "#office-updates", "facilities", "New ergonomic chairs have arrived!", "2024-02-06 17:00:00", 0, None),
+        ("slack_083", "#wellness", "fitness-coordinator", "Walking group meeting at 5:30 PM!", "2024-02-06 17:30:00", 0, None),
+        ("slack_084", "#general", "team-member-19", "Great collaboration on the project!", "2024-02-07 08:00:00", 0, None),
+        ("slack_085", "#random", "team-member-20", "Coffee break anyone?", "2024-02-07 10:00:00", 0, None),
+        ("slack_086", "#tech-talk", "dev-5", "Interesting discussion about microservices!", "2024-02-07 11:00:00", 0, None),
+        ("slack_087", "#watercooler", "team-member-21", "Anyone have good podcast recommendations?", "2024-02-07 12:00:00", 0, None),
+        ("slack_088", "#lunch", "team-member-22", "Team lunch at the new restaurant!", "2024-02-07 12:30:00", 0, None),
+        ("slack_089", "#feedback", "product-manager", "Feature request summary is ready!", "2024-02-07 15:00:00", 0, None),
+        ("slack_090", "#celebrations", "hr-bot", "Team building event sign-up is open!", "2024-02-07 16:00:00", 0, None),
+        ("slack_091", "#office-updates", "admin-bot", "New printer setup in the copy room!", "2024-02-07 17:00:00", 0, None),
+        ("slack_092", "#wellness", "wellness-coordinator", "Stress management workshop this week!", "2024-02-07 17:30:00", 0, None),
+        ("slack_093", "#general", "team-member-23", "Thanks for the great teamwork!", "2024-02-08 08:00:00", 0, None),
+        ("slack_094", "#random", "team-member-24", "TGIF! Have a great weekend!", "2024-02-08 17:00:00", 0, None),
+        ("slack_095", "#tech-talk", "dev-6", "New development tools training next week!", "2024-02-09 09:00:00", 0, None),
+        ("slack_096", "#watercooler", "team-member-25", "Anyone tried the new restaurant downtown?", "2024-02-09 12:00:00", 0, None),
+        ("slack_097", "#lunch", "team-member-26", "Potluck lunch next Friday!", "2024-02-09 12:30:00", 0, None),
+        ("slack_098", "#feedback", "customer-success", "Customer testimonials are amazing!", "2024-02-09 15:00:00", 0, None),
+        ("slack_099", "#celebrations", "team-member-27", "Congratulations on the promotion!", "2024-02-09 16:00:00", 0, None),
+        ("slack_100", "#office-updates", "facilities", "Office renovation starting next month!", "2024-02-09 17:00:00", 0, None),
     ]
     
     # Insert important messages
     for message in important_messages:
         cursor.execute("""
-            INSERT OR IGNORE INTO slack_messages (custom_id, channel, sender, message, timestamp, thread_ts, is_urgent, mentions)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT OR IGNORE INTO messages (custom_id, channel, user, message, timestamp, is_mention, thread_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, message)
     
     # Insert noise messages
     for message in noise_messages:
         cursor.execute("""
-            INSERT OR IGNORE INTO slack_messages (custom_id, channel, sender, message, timestamp, thread_ts, is_urgent, mentions)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT OR IGNORE INTO messages (custom_id, channel, user, message, timestamp, is_mention, thread_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         """, message)
     
     conn.commit()

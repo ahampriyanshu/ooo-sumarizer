@@ -155,6 +155,9 @@ class OOOSummarizerAgent:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             report_filename = f"reports/ooo_report_{timestamp}.json"
             
+            # Ensure reports directory exists
+            os.makedirs("reports", exist_ok=True)
+            
             with open(report_filename, "w") as f:
                 json.dump(report, f, indent=2)
             
