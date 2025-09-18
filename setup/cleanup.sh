@@ -13,6 +13,8 @@ echo "   ✅ Removed all OOO reports"
 # Remove all cached agent reports
 echo "💾 Removing cached agent reports..."
 rm -f tests/cached_agent_report*.json
+rm -f tests/test_data/reports/agent_report_*.json
+rm -f tests/test_data/reports/cached_agent_report*.json
 echo "   ✅ Removed all cached agent reports"
 
 # Remove all database files
@@ -46,6 +48,7 @@ echo "🎉 Cleanup completed successfully!"
 echo "📁 Cleaned directories:"
 echo "   - reports/ (all JSON files)"
 echo "   - tests/ (cached reports and cache)"
+echo "   - tests/test_data/reports/ (agent reports with fixed constant ID)"
 echo "   - data/databases/ (all database files)"
 echo "   - All __pycache__ directories"
 echo "   - Test result files"

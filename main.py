@@ -72,7 +72,6 @@ class OOOSummarizerAgent:
         try:
             # Create MCP sessions
             await self.mcp_client.create_all_sessions()
-            print("✅ MCP server sessions created successfully!")
             
             # Let the LLM discover and use tools to collect data
             with open("prompts/data_collection_prompt.txt", "r") as f:
@@ -81,46 +80,48 @@ class OOOSummarizerAgent:
             # Replace placeholders manually to avoid conflicts with JSON braces
             data_collection_prompt = data_collection_prompt.replace("{start_date}", start_date)
             data_collection_prompt = data_collection_prompt.replace("{end_date}", end_date)
-            
-            print("🔍 Discovering available tools and collecting data...")
             data_result = await self.agent.run(data_collection_prompt)
-            print("✅ Data collection completed!")
             
             # Generate summary using LLM
             with open("prompts/summary_prompt.txt", "r") as f:
                 summary_prompt = f.read()
             
             summary_prompt = f"{summary_prompt}\n\n## Data Collected\n```json\n{data_result}\n```"
-            
-            print("🤖 Generating comprehensive summary...")
             summary_result = await self.agent.run(summary_prompt)
-            print("✅ Summary generated!")
             
             # Extract action items using LLM
             with open("prompts/action_items_prompt.txt", "r") as f:
                 action_items_prompt = f.read()
             
             action_items_prompt = f"{action_items_prompt}\n\n## Data Collected\n```json\n{data_result}\n```"
-            
-            print("📝 Extracting action items...")
             action_items_result = await self.agent.run(action_items_prompt)
-            print("✅ Action items extracted!")
             
             # Analyze priorities using LLM
             with open("prompts/priority_analysis_prompt.txt", "r") as f:
                 priority_analysis_prompt = f.read()
             
             priority_analysis_prompt = f"{priority_analysis_prompt}\n\n## Data Collected\n```json\n{data_result}\n```"
-            
-            print("⚡ Analyzing priorities...")
             priority_result = await self.agent.run(priority_analysis_prompt)
-            print("✅ Priority analysis completed!")
             
-            # Parse results
+            # Parse results - extract JSON from markdown code blocks if present
             try:
-                summary_data = json.loads(summary_result)
-                action_items_data = json.loads(action_items_result)
-                priority_data = json.loads(priority_result)
+                def extract_json_from_markdown(text):
+                    """Extract JSON from markdown code blocks"""
+                    import re
+                    # Look for JSON in code blocks
+                    json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', text, re.DOTALL)
+                    if json_match:
+                        return json_match.group(1)
+                    # If no code blocks, try parsing the whole text
+                    return text
+                
+                summary_json = extract_json_from_markdown(summary_result)
+                action_items_json = extract_json_from_markdown(action_items_result)
+                priority_json = extract_json_from_markdown(priority_result)
+                
+                summary_data = json.loads(summary_json)
+                action_items_data = json.loads(action_items_json)
+                priority_data = json.loads(priority_json)
                 
                 # Create final report
                 report = {
@@ -150,15 +151,8 @@ class OOOSummarizerAgent:
             with open(report_filename, "w") as f:
                 json.dump(report, f, indent=2)
             
-            print("=" * 50)
-            print("🎉 OOO Summary Report Generated Successfully!")
-            print("=" * 50)
-            print(f"📄 Report saved to: {report_filename}")
-            print()
-            print("📊 Report Contents:")
-            print("   - Summary: Executive summary")
-            print("   - Action Items: P0, P1, P2 priorities")
-            print("   - Updates: Source-wise categorized updates")
+            # Output JSON to stdout for test suite
+            print(json.dumps(report))
             
             return report
             
@@ -177,9 +171,23 @@ class OOOSummarizerAgent:
 
 async def main():
     """Main function"""
+    import sys
+    
+    # Parse command line arguments for date range
+    start_date = "2024-01-01"
+    end_date = "2024-01-03"
+    
+    if len(sys.argv) >= 3:
+        start_date = sys.argv[1]
+        end_date = sys.argv[2]
+    elif len(sys.argv) == 2:
+        print("Usage: python main.py <start_date> <end_date>")
+        print("Example: python main.py 2024-02-01 2024-02-14")
+        sys.exit(1)
+    
     agent = OOOSummarizerAgent()
     try:
-        await agent.generate_report()
+        await agent.generate_report(start_date, end_date)
     except asyncio.CancelledError:
         # Handle cancellation gracefully
         pass

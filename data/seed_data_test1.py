@@ -5,7 +5,6 @@ This script creates mock data for a 3-day OOO period with realistic scenarios.
 
 import sqlite3
 import os
-from datetime import datetime, timedelta
 
 def create_email_database():
     """Create and populate email database for test case 1"""
@@ -146,7 +145,6 @@ def create_email_database():
     
     conn.commit()
     conn.close()
-    print("✅ Email database created and seeded for Test Case 1")
 
 def create_calendar_database():
     """Create and populate calendar database for test case 1"""
@@ -295,7 +293,6 @@ def create_calendar_database():
     
     conn.commit()
     conn.close()
-    print("✅ Calendar database created and seeded for Test Case 1")
 
 def create_slack_database():
     """Create and populate Slack database for test case 1"""
@@ -431,7 +428,6 @@ def create_slack_database():
     
     conn.commit()
     conn.close()
-    print("✅ Slack database created and seeded for Test Case 1")
 
 def create_kanban_database():
     """Create and populate Kanban database for test case 1"""
@@ -719,7 +715,6 @@ def create_kanban_database():
     
     conn.commit()
     conn.close()
-    print("✅ Kanban database created and seeded for Test Case 1")
 
 def create_github_database():
     """Create and seed GitHub database for Test Case 1"""
@@ -842,13 +837,9 @@ def create_github_database():
     
     conn.commit()
     conn.close()
-    print("✅ GitHub database created and seeded for Test Case 1")
 
 def main():
     """Main function to create all databases for Test Case 1"""
-    print("🚀 Starting Test Case 1 database creation and seeding...")
-    print("📅 OOO Period: 2024-01-01 to 2024-01-03 (3 days)")
-    print()
     
     # Create databases directory if it doesn't exist
     os.makedirs("data/databases", exist_ok=True)
@@ -857,19 +848,7 @@ def main():
     create_calendar_database()
     create_slack_database()
     create_kanban_database()
-    print("🔧 Creating GitHub database...")
-    create_github_database()
-    
-    print()
-    print("✅ Test Case 1 databases created and seeded successfully!")
-    print("📊 Summary:")
-    print("   - Email database: 10 emails (2 important, 8 noise) - 80% noise ratio")
-    print("   - Calendar database: 10 events (2 important, 8 noise) - 80% noise ratio")
-    print("   - Slack database: 10 messages (2 important, 8 noise) - 80% noise ratio")
-    print("   - Kanban database: 10 tasks (2 important, 8 noise) - 80% noise ratio")
-    print("   - GitHub database: 8 commits, 4 PRs, 3 issues, 2 code reviews (2 important, 6 noise) - 75% noise ratio")
-    print()
-    print("🎯 Test Case 1: 3-day OOO period with New Year context and production issues")
+    create_github_database()    
 
 if __name__ == "__main__":
     main()

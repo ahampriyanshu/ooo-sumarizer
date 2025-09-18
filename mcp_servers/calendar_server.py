@@ -15,7 +15,6 @@ mcp = FastMCP("calendar-server")
 @mcp.tool()
 def get_events(start_date: str, end_date: str, event_type: str = "all") -> str:
     """Get calendar events for a specific date range"""
-    print(f"🔍 [CALENDAR] get_events called with start_date={start_date}, end_date={end_date}, event_type={event_type}")
     conn = sqlite3.connect("/Users/karan/hr/ai-agents/ooo-summariser/data/databases/calendar.db")
     cursor = conn.cursor()
     
@@ -100,7 +99,6 @@ def get_conflicts(start_date: str, end_date: str) -> str:
 @mcp.tool()
 def get_deadlines(start_date: str, end_date: str) -> str:
     """Get upcoming deadlines and important dates"""
-    print(f"🔍 [CALENDAR] get_deadlines called with start_date={start_date}, end_date={end_date}")
     conn = sqlite3.connect("/Users/karan/hr/ai-agents/ooo-summariser/data/databases/calendar.db")
     cursor = conn.cursor()
     

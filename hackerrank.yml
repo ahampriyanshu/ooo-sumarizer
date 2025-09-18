@@ -24,3 +24,4 @@ configuration:
         - tests/conftest.py
         - tests/test_data/*
         - tests/prompts/*
+        - run_agent.py

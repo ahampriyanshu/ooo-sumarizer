@@ -6,7 +6,6 @@ import pytest
 import asyncio
 import json
 import os
-from datetime import datetime
 from main import OOOSummarizerAgent
 
 
@@ -17,30 +16,41 @@ def load_test_data(test_case="test_case_1"):
         return json.load(f)
 
 
-@pytest.fixture(scope="session", params=["test_case_1", "test_case_2"])
+@pytest.fixture(scope="session", params=["test_case_1", "test_case_2", "test_case_3"])
 def test_case_data(request):
     """Parameterized fixture that provides test case data for both test cases"""
     return load_test_data(request.param)
 
 
-@pytest.fixture(scope="session")
-def agent_report():
+def get_agent_report(test_case):
     """
-    Session-scoped fixture that runs the agent once and caches the result.
-    This prevents running the expensive agent multiple times across all tests.
+    Get agent report for a specific test case, with caching.
+    This prevents running the expensive agent multiple times for the same test case.
+    Uses a fixed constant ID system for cache identification.
     """
-    # Check if we have a cached report from a recent run
-    cache_file = "tests/cached_agent_report.json"
-    cache_timeout = 300  # 5 minutes
+    # Create cache file name based on test case with fixed constant ID
+    cache_file = f"tests/test_data/reports/agent_report_{test_case}_v1.json"
     
     if os.path.exists(cache_file):
-        cache_age = datetime.now().timestamp() - os.path.getmtime(cache_file)
-        if cache_age < cache_timeout:
-            print("📋 Using cached agent report (less than 5 minutes old)")
-            with open(cache_file, 'r') as f:
-                return json.load(f)
+        print(f"📋 Using cached agent report for {test_case} (fixed constant ID: v1)")
+        with open(cache_file, 'r') as f:
+            return json.load(f)
     
-    print("🚀 Running OOO Summarizer Agent (this will be cached for future tests)...")
+    print(f"🚀 Running OOO Summarizer Agent for {test_case} (this will be cached for future tests)...")
+    
+    # Ensure test data is seeded for this test case
+    seed_script = f"data/seed_data_{test_case.replace('test_case_', 'test')}.py"
+    if not os.path.exists(seed_script):
+        raise FileNotFoundError(f"Seed script not found: {seed_script}")
+    
+    # Run the seeding script
+    import subprocess
+    result = subprocess.run(["python", seed_script], capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"Failed to seed test data for {test_case}: {result.stderr}")
+    
+    # Load test data to get date range
+    test_data = load_test_data(test_case)
     
     # Run the agent
     loop = asyncio.new_event_loop()
@@ -49,8 +59,8 @@ def agent_report():
     try:
         agent = OOOSummarizerAgent()
         report = loop.run_until_complete(agent.generate_report(
-            start_date="2024-01-01",
-            end_date="2024-01-03"
+            start_date=test_data["date_range"]["start"],
+            end_date=test_data["date_range"]["end"]
         ))
         
         # Cache the result
@@ -58,7 +68,7 @@ def agent_report():
         with open(cache_file, 'w') as f:
             json.dump(report, f, indent=2)
         
-        print("✅ Agent report cached for future test runs")
+        print(f"✅ Agent report for {test_case} cached for future test runs")
         return report
         
     finally:

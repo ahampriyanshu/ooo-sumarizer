@@ -1,0 +1,115 @@
+{
+	"test_case": "Test Case 3: 14-day OOO (Feb 1-14, 2024)",
+	"description": "Valentine's Day context with Q1 planning, security issues, and system maintenance",
+	"date_range": {
+		"start": "2024-02-01",
+		"end": "2024-02-14"
+	},
+	"important_ids": {
+		"emails": ["email_021", "email_026", "email_030", "email_031"],
+		"calendar_events": ["event_021", "event_025", "event_027", "event_028"],
+		"slack_messages": ["slack_021", "slack_030", "slack_043", "slack_110"],
+		"kanban_tasks": ["task_021", "task_022", "task_023", "task_024"],
+		"github_commits": ["commit_021", "commit_022"],
+		"github_pull_requests": ["pr_021", "pr_022"],
+		"github_issues": ["issue_021", "issue_022"]
+	},
+	"noise_ids": {
+		"emails": [
+			"email_022",
+			"email_023",
+			"email_024",
+			"email_025",
+			"email_027",
+			"email_028",
+			"email_029",
+			"email_032",
+			"email_033",
+			"email_034",
+			"email_035",
+			"email_036",
+			"email_037",
+			"email_038",
+			"email_039",
+			"email_040"
+		],
+		"calendar_events": [
+			"event_022",
+			"event_023",
+			"event_024",
+			"event_026",
+			"event_029",
+			"event_030",
+			"event_031",
+			"event_032",
+			"event_033",
+			"event_034",
+			"event_035",
+			"event_036",
+			"event_037",
+			"event_038",
+			"event_039",
+			"event_040"
+		],
+		"slack_messages": [
+			"slack_022",
+			"slack_023",
+			"slack_024",
+			"slack_025",
+			"slack_026",
+			"slack_027",
+			"slack_028",
+			"slack_029",
+			"slack_031",
+			"slack_032",
+			"slack_033",
+			"slack_034",
+			"slack_035",
+			"slack_036",
+			"slack_037",
+			"slack_038"
+		],
+		"kanban_tasks": [
+			"task_025",
+			"task_026",
+			"task_027",
+			"task_028",
+			"task_029",
+			"task_030",
+			"task_031",
+			"task_032",
+			"task_033",
+			"task_034",
+			"task_035",
+			"task_036",
+			"task_037",
+			"task_038",
+			"task_039",
+			"task_040"
+		],
+		"github_commits": [
+			"commit_023",
+			"commit_024",
+			"commit_025",
+			"commit_026",
+			"commit_027",
+			"commit_028"
+		],
+		"github_pull_requests": ["pr_023", "pr_024"],
+		"github_issues": ["issue_023"]
+	},
+	"expected_themes": [
+		"Security vulnerability and patch deployment",
+		"Q1 architecture review and system redesign",
+		"Performance review deadline",
+		"Production system maintenance",
+		"Valentine's Day team building activities",
+		"Q1 planning and goal setting"
+	],
+	"context_notes": {
+		"seasonal_context": "Valentine's Day period with team building events",
+		"business_context": "Q1 planning phase with architecture reviews",
+		"technical_context": "Security vulnerabilities and system maintenance",
+		"timeline_context": "14-day absence covering critical business activities"
+	}
+}

@@ -13,8 +13,11 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     main_script = os.path.join(script_dir, "main.py")
     
+    # Pass through all command line arguments except the script name
+    cmd = [sys.executable, main_script] + sys.argv[1:]
+    
     # Run the main script with stderr redirected to suppress asyncio cleanup errors
-    result = subprocess.run([sys.executable, main_script], 
+    result = subprocess.run(cmd, 
                           stderr=subprocess.DEVNULL,
                           text=True)
     
