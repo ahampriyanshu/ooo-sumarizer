@@ -7,6 +7,7 @@ import asyncio
 import json
 import os
 from main import OOOSummarizerAgent
+from .test_ooo_agent import TEST_CASES
 
 
 def load_test_data(test_case="test_case_1"):
@@ -16,7 +17,7 @@ def load_test_data(test_case="test_case_1"):
         return json.load(f)
 
 
-@pytest.fixture(scope="session", params=["test_case_1", "test_case_2", "test_case_3"])
+@pytest.fixture(scope="session", params=TEST_CASES)
 def test_case_data(request):
     """Parameterized fixture that provides test case data for both test cases"""
     return load_test_data(request.param)

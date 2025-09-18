@@ -29,13 +29,15 @@ class OOOSummarizerAgent:
     def __init__(self):
         # Initialize LangChain OpenAI client (required for mcp-use)
         api_key = os.getenv("OPENAI_API_KEY")
+        base_url = os.getenv("OPENAI_API_BASE")
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable is not set")
         
         self.llm = ChatOpenAI(
             api_key=api_key,
             model="gpt-4o-mini",
-            temperature=0.1
+            temperature=0.1,
+            base_url=base_url,
         )
         
         # Configure MCP servers for dynamic tool discovery

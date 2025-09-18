@@ -9,6 +9,9 @@ import os
 import subprocess
 from datetime import datetime
 
+# Test case constants
+TEST_CASES = ["test_case_1", "test_case_2", "test_case_3"]
+
 
 def load_test_data(test_case="test_case_1"):
     """Load test data from JSON file"""
@@ -93,7 +96,7 @@ class TestOOOSummarizerAgent:
         print(f"✅ Agent report for {test_case} cached for future test runs")
         return report
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_json_validity(self, test_case):
         """Test that the report is valid JSON"""
         agent_report = self._get_agent_report(test_case)
@@ -102,7 +105,7 @@ class TestOOOSummarizerAgent:
         parsed_report = json.loads(json_str)
         assert parsed_report == agent_report, f"Report should be valid JSON for {test_case}"
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_json_structure(self, test_case):
         """Test that the agent report has the correct JSON structure"""
         agent_report = self._get_agent_report(test_case)
@@ -126,7 +129,7 @@ class TestOOOSummarizerAgent:
             assert "P1" in updates[source], f"Missing P1 updates for {source} in {test_case}"
     
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_summary_content(self, test_case):
         """Test that the summary meets quality criteria using an LLM judge"""
         from langchain_openai import ChatOpenAI
@@ -182,7 +185,7 @@ class TestOOOSummarizerAgent:
         except Exception as e:
             print(f"Error evaluating summary: {e}")
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_action_items_structure(self, test_case):
         """Test that action items have the correct structure"""
         agent_report = self._get_agent_report(test_case)
@@ -193,7 +196,7 @@ class TestOOOSummarizerAgent:
                     assert field in item, f"Missing {field} in {priority} action item for {test_case}"
                     assert item[field], f"Empty {field} in {priority} action item for {test_case}"
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_updates_structure(self, test_case):
         """Test that updates have the correct structure"""
         agent_report = self._get_agent_report(test_case)
@@ -209,7 +212,7 @@ class TestOOOSummarizerAgent:
                     if "due_date" in item:
                         assert item["due_date"], f"Empty due_date in {source} {priority} update for {test_case}"
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_important_items_in_p0(self, test_case):
         """Test that important items are correctly prioritized as P0"""
         # Load test data for the specific test case
@@ -238,7 +241,7 @@ class TestOOOSummarizerAgent:
                 found_source_ids = [iid for iid in important_ids if iid in update_ids]
                 assert len(found_source_ids) >= 1, f"Expected at least 1 important ID in {source} P0 updates, found: {found_source_ids}"
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_noise_items_not_in_p0(self, test_case):
         """Test that noise items are not over-prioritized as P0"""
         # Load test data for the specific test case
@@ -261,7 +264,7 @@ class TestOOOSummarizerAgent:
         # Allow some noise in P0 but not too much (max 1 noise item)
         assert len(noise_in_p0) <= 1, f"Too many noise items in P0 action items, found: {noise_in_p0}"
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_all_sources_present(self, test_case):
         """Test that all data sources are represented in the report"""
         # Get agent report for this test case
@@ -284,7 +287,7 @@ class TestOOOSummarizerAgent:
         all_sources = sources_in_action_items.union(sources_in_updates)
         assert len(all_sources) >= 1, f"Should have at least 1 source represented for {test_case}, found: {all_sources}"
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_due_dates_format(self, test_case):
         """Test that due dates are in the correct format"""
         agent_report = self._get_agent_report(test_case)
@@ -296,7 +299,7 @@ class TestOOOSummarizerAgent:
                 except ValueError:
                     pytest.fail(f"Invalid due date format for {test_case}: {due_date}")
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_context_quality(self, test_case):
         """Test that context provides meaningful information"""
         agent_report = self._get_agent_report(test_case)
@@ -306,7 +309,7 @@ class TestOOOSummarizerAgent:
                 assert len(context) >= 20, f"Context too short for {test_case}: {context}"
                 assert len(context.split()) >= 4, f"Context should have at least 4 words for {test_case}: {context}"
     
-    @pytest.mark.parametrize("test_case", ["test_case_1", "test_case_2", "test_case_3"])
+    @pytest.mark.parametrize("test_case", TEST_CASES)
     def test_no_empty_sections(self, test_case):
         """Test that each priority level has at least one item"""
         # Get agent report for this test case
