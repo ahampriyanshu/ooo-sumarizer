@@ -1,5 +1,5 @@
 #!/bin/bash
 
-pip install -r requirements.txt
+pip install -q -r requirements.txt
 bash setup/cleanup.sh
 bash setup/seed.sh

@@ -378,9 +378,6 @@ def create_slack_database():
 
 def main():
     """Main function to create all databases for test case 3"""
-    print("🚀 Starting Test Case 3 database creation and seeding...")
-    print("📅 OOO Period: 2024-02-01 to 2024-02-14 (14 days)")
-    print()
     
     # Ensure databases directory exists
     os.makedirs("data/databases", exist_ok=True)
@@ -389,9 +386,7 @@ def main():
     create_email_database()
     create_calendar_database()
     create_slack_database()
-    
-    print()
-    print("✅ Test Case 3 databases created and seeded successfully!")
+
 
 if __name__ == "__main__":
     main()

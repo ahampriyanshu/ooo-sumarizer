@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Pre-generate agent reports for all test cases to enable fast parallel test execution.
+Generate agent reports for all test cases to enable fast parallel test execution.
 This script runs the agent once for each test case and caches the results.
 """
 
@@ -8,7 +8,6 @@ import os
 import sys
 import json
 import subprocess
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
 
@@ -24,11 +23,8 @@ def get_agent_report(test_case):
     cache_file = f"tests/test_data/reports/agent_report_{test_case}_v1.json"
     
     if os.path.exists(cache_file):
-        print(f"📋 Using cached agent report for {test_case}")
         with open(cache_file, 'r') as f:
             return json.load(f)
-    
-    print(f"🚀 Running OOO Summarizer Agent for {test_case}...")
     
     # Ensure test data is seeded for this test case
     seed_script = f"data/seed_data_{test_case.replace('test_case_', 'test')}.py"
@@ -87,7 +83,6 @@ def get_agent_report(test_case):
     with open(cache_file, 'w') as f:
         json.dump(report, f, indent=2)
     
-    print(f"✅ Agent report for {test_case} cached successfully")
     return report
 
 def generate_single_report(test_case):
@@ -100,8 +95,7 @@ def generate_single_report(test_case):
         return test_case, None, 0, str(e)
 
 def main():
-    """Pre-generate all agent reports in parallel"""
-    print("🎯 Pre-generating agent reports for all test cases in parallel...")
+    """Generate all agent reports in parallel"""
     
     test_cases = ["test_case_1", "test_case_2", "test_case_3"]
     start_time = time.time()
@@ -122,8 +116,6 @@ def main():
             
             if error:
                 print(f"❌ {test_case}: Failed to generate report - {error}")
-            else:
-                print(f"✅ {test_case}: Generated report with {p0_count} P0 items")
     
     # Check for any failures
     failed_cases = [case for case, (_, _, error) in results.items() if error]
@@ -134,16 +126,7 @@ def main():
     end_time = time.time()
     duration = end_time - start_time
     
-    print(f"\n🎉 All agent reports pre-generated successfully in {duration:.1f} seconds!")
-    print("📁 Cached reports available in: tests/test_data/reports/")
-    
-    # List the generated files
-    reports_dir = Path("tests/test_data/reports")
-    if reports_dir.exists():
-        print("\n📋 Generated cache files:")
-        for cache_file in sorted(reports_dir.glob("agent_report_*_v1.json")):
-            size = cache_file.stat().st_size
-            print(f"   - {cache_file.name} ({size} bytes)")
+    print(f"\n🎉 All agent reports generated successfully in {duration:.1f} seconds!")
 
 if __name__ == "__main__":
     main()
