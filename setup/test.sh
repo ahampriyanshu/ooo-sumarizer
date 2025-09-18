@@ -1,4 +1,4 @@
 #!/bin/bash
 
 bash setup/install.sh
-python3 setup/streaming_test_execution.py
+python3 -m pytest tests/ -v --junit-xml=unit.xml -n auto

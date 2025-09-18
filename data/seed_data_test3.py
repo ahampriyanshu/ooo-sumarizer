@@ -128,7 +128,6 @@ def create_email_database():
     
     conn.commit()
     conn.close()
-    print("✅ Email database created for Test Case 3")
 
 def create_calendar_database():
     """Create and populate calendar database for Test Case 3"""
@@ -227,7 +226,6 @@ def create_calendar_database():
     
     conn.commit()
     conn.close()
-    print("✅ Calendar database created for Test Case 3")
 
 def create_slack_database():
     """Create and populate Slack database for Test Case 3"""
@@ -365,18 +363,13 @@ def create_slack_database():
     
     conn.commit()
     conn.close()
-    print("✅ Slack database created for Test Case 3")
 
 def main():
     """Create all databases for Test Case 3"""
-    print("🎯 Creating seed data for Test Case 3: 14-day OOO (Feb 1-14, 2024)")
-    print("📅 Valentine's Day context with Q1 planning, security issues, and system maintenance")
     
     create_email_database()
     create_calendar_database()
     create_slack_database()
-    
-    print("✅ All databases created successfully for Test Case 3")
 
 if __name__ == "__main__":
     main()
