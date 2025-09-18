@@ -41,8 +41,7 @@ See `DYNAMIC_TOOL_DISCOVERY.md` for detailed explanation and implementations.
          ┌───────────────────────┼───────────────────────┐
          │                       │                       │
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│ Kanban Server   │    │  GitHub Server  │    │   LLM Engine    │
-│ (Jira/Trello)   │    │   (Activity)    │    │  (OpenAI GPT)   │
+│   LLM Engine    │    │   LLM Engine    │    │  (OpenAI GPT)   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -62,15 +61,6 @@ See `DYNAMIC_TOOL_DISCOVERY.md` for detailed explanation and implementations.
 
     - Simulates Slack workspace with messages, mentions, and channel activity
     - Tools: `get_messages`, `get_mentions`, `get_direct_messages`, `get_channel_activity`
-
-4. **Kanban Server** (`kanban_server.py`)
-
-    - Simulates Jira/Trello/Asana with task updates and project progress
-    - Tools: `get_tasks`, `get_task_updates`, `get_project_progress`, `get_blocked_tasks`
-
-5. **GitHub Server** (`github_server.py`)
-    - Simulates GitHub with commits, PRs, issues, and code reviews
-    - Tools: `get_commits`, `get_pull_requests`, `get_issues`, `get_code_reviews`
 
 ## 🚀 Quick Start
 
@@ -207,21 +197,6 @@ The system includes realistic mock data for the OOO period (2024-01-15 to 2024-0
 -   Client timeline inquiry
 -   Urgent security audit discussion
 
-### Kanban Data (4 tasks + updates)
-
--   OAuth2 Authentication implementation
--   Database Connection Pool fix (blocked)
--   Payment Module code review (completed)
--   API Documentation update
-
-### GitHub Data (3 commits, 2 PRs, 2 issues, 2 reviews)
-
--   OAuth2 authentication commits
--   Database connection fixes
--   API documentation updates
--   Pull request reviews and feedback
--   Bug reports and feature requests
-
 ## 🤖 AI-Powered Analysis
 
 The system uses OpenAI GPT-4 to generate three types of analysis:
@@ -258,8 +233,6 @@ ooo-summariser/
 │   ├── email_server.py      # Email MCP server
 │   ├── calendar_server.py   # Calendar MCP server
 │   ├── slack_server.py      # Slack MCP server
-│   ├── kanban_server.py     # Kanban MCP server
-│   └── github_server.py     # GitHub MCP server
 ├── data/
 │   ├── __init__.py
 │   ├── seed_data.py         # Database seeding script
@@ -267,8 +240,6 @@ ooo-summariser/
 │       ├── emails.db
 │       ├── calendar.db
 │       ├── slack.db
-│       ├── kanban.db
-│       └── github.db
 └── prompts/
     ├── summary_prompt.txt      # LLM prompt for summaries
     ├── action_items_prompt.txt # LLM prompt for action items
@@ -347,8 +318,6 @@ python -c "import asyncio; from main import OOOSummarizerAgent; asyncio.run(OOOS
 sqlite3 data/databases/emails.db "SELECT COUNT(*) FROM emails;"
 sqlite3 data/databases/calendar.db "SELECT COUNT(*) FROM events;"
 sqlite3 data/databases/slack.db "SELECT COUNT(*) FROM messages;"
-sqlite3 data/databases/kanban.db "SELECT COUNT(*) FROM tasks;"
-sqlite3 data/databases/github.db "SELECT COUNT(*) FROM commits;"
 ```
 
 ## 🚨 Troubleshooting

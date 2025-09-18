@@ -2,6 +2,7 @@
 """
 Streaming test execution: Run tests as soon as their corresponding agent reports are available.
 This eliminates waiting for all reports to be generated before starting any tests.
+Uses pytest programmatically while preserving streaming behavior.
 """
 
 import os
@@ -10,6 +11,7 @@ import json
 import subprocess
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import pytest
 
 def load_test_data(test_case):
     """Load test data for a specific test case"""
@@ -23,11 +25,11 @@ def get_agent_report(test_case):
     cache_file = f"tests/test_data/reports/agent_report_{test_case}_v1.json"
     
     if os.path.exists(cache_file):
-        print(f"📋 Using cached agent report for {test_case}")
+        print(f"Using cached agent report for {test_case}")
         with open(cache_file, 'r') as f:
             return json.load(f)
     
-    print(f"🚀 Running OOO Summarizer Agent for {test_case}...")
+    print(f"Running OOO Summarizer Agent for {test_case}...")
     
     # Load test data to get date range
     test_data = load_test_data(test_case)
@@ -80,7 +82,7 @@ def get_agent_report(test_case):
     with open(cache_file, 'w') as f:
         json.dump(report, f, indent=2)
     
-    print(f"✅ Agent report for {test_case} cached successfully")
+    print(f"Agent report for {test_case} cached successfully")
     return report
 
 def generate_single_report(test_case):
@@ -93,34 +95,47 @@ def generate_single_report(test_case):
         return test_case, None, 0, str(e)
 
 def run_tests_for_case(test_case):
-    """Run all tests for a specific test case"""
-    print(f"🧪 Running tests for {test_case}...")
-    
-    # Run pytest for this specific test case
+    """Run all tests for a specific test case using pytest with native output"""
+    # Get the project root directory
     if '__file__' in globals():
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     else:
         project_root = os.path.dirname(os.path.dirname(os.path.abspath('setup/streaming_test_execution.py')))
     
-    result = subprocess.run([
-        "python", "-m", "pytest", 
-        "tests/test_ooo_agent.py::TestOOOSummarizerAgent",
-        "-k", test_case,
-        "-v", "--tb=short"
-    ], capture_output=True, text=True, cwd=project_root)
+    # Change to project root directory
+    original_cwd = os.getcwd()
+    os.chdir(project_root)
     
-    if result.returncode == 0:
-        print(f"✅ All tests passed for {test_case}")
-        return test_case, True, result.stdout
-    else:
-        print(f"❌ Some tests failed for {test_case}")
-        print(f"Error output: {result.stderr[:500]}...")
-        return test_case, False, result.stderr
+    try:
+        # Run pytest programmatically for this specific test case
+        # Use pytest.main() with specific test selection and native output
+        pytest_args = [
+            "tests/test_ooo_agent.py::TestOOOSummarizerAgent",
+            "-k", test_case,
+            "-v",  # Verbose output
+            "--tb=short",  # Short traceback format
+            "--no-header",  # Remove pytest header for cleaner output
+        ]
+        
+        # Run pytest with native output (no capture)
+        exit_code = pytest.main(pytest_args)
+        
+        if exit_code == 0:
+            return test_case, True, None
+        else:
+            return test_case, False, None
+            
+    except Exception as e:
+        print(f"❌ Exception running tests for {test_case}: {e}")
+        return test_case, False, str(e)
+    finally:
+        # Restore original working directory
+        os.chdir(original_cwd)
 
 def main():
     """Streaming test execution: Generate reports and run tests as they become available"""
-    print("🎯 Starting streaming test execution...")
-    print("📋 Reports will be generated in parallel, tests will run as reports become available")
+    print("Starting streaming test execution...")
+    print("Reports will be generated in parallel, tests will run as reports become available")
     
     test_cases = ["test_case_1", "test_case_2", "test_case_3"]
     start_time = time.time()
@@ -142,16 +157,16 @@ def main():
             test_case, report, p0_count, error = future.result()
             
             if error:
-                print(f"❌ {test_case}: Failed to generate report - {error}")
+                print(f"ERROR: {test_case} failed to generate report - {error}")
                 continue
             
-            print(f"✅ {test_case}: Generated report with {p0_count} P0 items")
+            print(f"Generated report for {test_case} with {p0_count} P0 items")
             completed_reports[test_case] = (report, p0_count)
             
             # Start tests for this case immediately
             test_future = executor.submit(run_tests_for_case, test_case)
             test_futures[test_future] = test_case
-            print(f"🚀 Started tests for {test_case} (report available)")
+            print(f"Starting tests for {test_case}")
         
         # Collect test results
         test_results = {}
@@ -162,31 +177,17 @@ def main():
     end_time = time.time()
     duration = end_time - start_time
     
-    # Summary
-    print(f"\n🎉 Streaming test execution completed in {duration:.1f} seconds!")
+    # Minimal summary - let pytest output be the primary display
+    print(f"\nStreaming test execution completed in {duration:.1f} seconds")
     
-    # Report generation summary
-    print(f"\n📊 Report Generation Summary:")
-    for test_case, (report, p0_count) in completed_reports.items():
-        print(f"   ✅ {test_case}: {p0_count} P0 items")
+    # Count results
+    passed_cases = sum(1 for success, _ in test_results.values() if success)
+    failed_cases = len(test_cases) - passed_cases
     
-    # Test execution summary
-    print(f"\n🧪 Test Execution Summary:")
-    passed_cases = 0
-    for test_case, (success, output) in test_results.items():
-        status = "✅ PASSED" if success else "❌ FAILED"
-        print(f"   {status} {test_case}")
-        if success:
-            passed_cases += 1
-    
-    print(f"\n📈 Overall Results:")
-    print(f"   Total test cases: {len(test_cases)}")
-    print(f"   Passed: {passed_cases}")
-    print(f"   Failed: {len(test_cases) - passed_cases}")
-    print(f"   Success rate: {passed_cases/len(test_cases)*100:.1f}%")
+    print(f"Test cases: {passed_cases} passed, {failed_cases} failed")
     
     # Exit with error code if any tests failed
-    if passed_cases < len(test_cases):
+    if failed_cases > 0:
         sys.exit(1)
 
 if __name__ == "__main__":

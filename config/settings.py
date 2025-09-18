@@ -24,14 +24,6 @@ MCP_SERVERS = {
         "name": "slack-server",
         "description": "Slack data source for OOO summarizer"
     },
-    "kanban": {
-        "name": "kanban-server",
-        "description": "Kanban board data source for OOO summarizer"
-    },
-    "github": {
-        "name": "github-server",
-        "description": "GitHub data source for OOO summarizer"
-    }
 }
 
 # OOO Period Configuration

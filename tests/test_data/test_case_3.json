@@ -15,11 +15,7 @@
 			"email_032"
 		],
 		"calendar_events": ["event_021", "event_025", "event_027", "event_028"],
-		"slack_messages": ["slack_021", "slack_030", "slack_043", "slack_110"],
-		"kanban_tasks": ["task_021", "task_022", "task_023", "task_024"],
-		"github_commits": ["commit_021", "commit_022"],
-		"github_pull_requests": ["pr_021", "pr_022"],
-		"github_issues": ["issue_021", "issue_022"]
+		"slack_messages": ["slack_021", "slack_030", "slack_043", "slack_110"]
 	},
 	"noise_ids": {
 		"emails": [
@@ -73,35 +69,7 @@
 			"slack_036",
 			"slack_037",
 			"slack_038"
-		],
-		"kanban_tasks": [
-			"task_025",
-			"task_026",
-			"task_027",
-			"task_028",
-			"task_029",
-			"task_030",
-			"task_031",
-			"task_032",
-			"task_033",
-			"task_034",
-			"task_035",
-			"task_036",
-			"task_037",
-			"task_038",
-			"task_039",
-			"task_040"
-		],
-		"github_commits": [
-			"commit_023",
-			"commit_024",
-			"commit_025",
-			"commit_026",
-			"commit_027",
-			"commit_028"
-		],
-		"github_pull_requests": ["pr_023", "pr_024"],
-		"github_issues": ["issue_023"]
+		]
 	},
 	"expected_themes": [
 		"Security vulnerability and patch deployment",

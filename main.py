@@ -146,7 +146,6 @@ class OOOSummarizerAgent:
                         "email": {"P0": [], "P1": []},
                         "calendar": {"P0": [], "P1": []},
                         "slack": {"P0": [], "P1": []},
-                        "kanban": {"P0": [], "P1": []},
                     }
                 }
             
