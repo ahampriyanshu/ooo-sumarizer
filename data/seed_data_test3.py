@@ -392,14 +392,6 @@ def main():
     
     print()
     print("✅ Test Case 3 databases created and seeded successfully!")
-    print("📊 Summary:")
-    print("   - Email database: 80 emails (16 important, 64 noise) - 80% noise ratio")
-    print("   - Calendar database: 60 events (12 important, 48 noise) - 80% noise ratio")
-    print("   - Slack database: 120 messages (24 important, 96 noise) - 80% noise ratio")
-    print("   - Kanban database: 60 tasks (12 important, 48 noise) - 80% noise ratio")
-    print("   - GitHub database: 40 commits (8 important, 32 noise) - 80% noise ratio")
-    print()
-    print("🎯 Test Case 3: 14-day OOO period with Valentine's Day context and Q1 planning")
 
 if __name__ == "__main__":
     main()

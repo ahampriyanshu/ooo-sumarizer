@@ -6,7 +6,14 @@
 		"end": "2024-02-14"
 	},
 	"important_ids": {
-		"emails": ["email_021", "email_026", "email_030", "email_031"],
+		"emails": [
+			"email_021",
+			"email_026",
+			"email_028",
+			"email_030",
+			"email_031",
+			"email_032"
+		],
 		"calendar_events": ["event_021", "event_025", "event_027", "event_028"],
 		"slack_messages": ["slack_021", "slack_030", "slack_043", "slack_110"],
 		"kanban_tasks": ["task_021", "task_022", "task_023", "task_024"],
@@ -21,9 +28,7 @@
 			"email_024",
 			"email_025",
 			"email_027",
-			"email_028",
 			"email_029",
-			"email_032",
 			"email_033",
 			"email_034",
 			"email_035",
