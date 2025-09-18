@@ -82,26 +82,32 @@ class OOOSummarizerAgent:
             data_collection_prompt = data_collection_prompt.replace("{end_date}", end_date)
             data_result = await self.agent.run(data_collection_prompt)
             
-            # Generate summary using LLM
-            with open("prompts/summary_prompt.txt", "r") as f:
-                summary_prompt = f.read()
+            async def generate_summary():
+                with open("prompts/summary_prompt.txt", "r") as f:
+                    summary_prompt = f.read()
+                summary_prompt = f"{summary_prompt}\n\n## Data Collected\n```json\n{data_result}\n```"
+                return await self.agent.run(summary_prompt)
             
-            summary_prompt = f"{summary_prompt}\n\n## Data Collected\n```json\n{data_result}\n```"
-            summary_result = await self.agent.run(summary_prompt)
+            async def extract_action_items():
+                with open("prompts/action_items_prompt.txt", "r") as f:
+                    action_items_prompt = f.read()
+                action_items_prompt = f"{action_items_prompt}\n\n## Data Collected\n```json\n{data_result}\n```"
+                return await self.agent.run(action_items_prompt)
             
-            # Extract action items using LLM
-            with open("prompts/action_items_prompt.txt", "r") as f:
-                action_items_prompt = f.read()
+            async def analyze_priorities():
+                with open("prompts/priority_analysis_prompt.txt", "r") as f:
+                    priority_analysis_prompt = f.read()
+                priority_analysis_prompt = f"{priority_analysis_prompt}\n\n## Data Collected\n```json\n{data_result}\n```"
+                return await self.agent.run(priority_analysis_prompt)
             
-            action_items_prompt = f"{action_items_prompt}\n\n## Data Collected\n```json\n{data_result}\n```"
-            action_items_result = await self.agent.run(action_items_prompt)
-            
-            # Analyze priorities using LLM
-            with open("prompts/priority_analysis_prompt.txt", "r") as f:
-                priority_analysis_prompt = f.read()
-            
-            priority_analysis_prompt = f"{priority_analysis_prompt}\n\n## Data Collected\n```json\n{data_result}\n```"
-            priority_result = await self.agent.run(priority_analysis_prompt)
+            # Run all three LLM calls in parallel
+            print("🚀 Running summary, action items, and priority analysis in parallel...")
+            summary_result, action_items_result, priority_result = await asyncio.gather(
+                generate_summary(),
+                extract_action_items(),
+                analyze_priorities()
+            )
+            print("✅ All LLM calls completed in parallel")
             
             # Parse results - extract JSON from markdown code blocks if present
             try:
