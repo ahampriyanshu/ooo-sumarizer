@@ -1,4 +1,4 @@
 #!/bin/bash
 
 bash setup/install.sh
-python3 run_agent.py
+streamlit run app.py --server.port 8000

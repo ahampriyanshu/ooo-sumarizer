@@ -29,3 +29,4 @@ configuration:
         - pytest.ini
         - README.md
         - run_agent.py
+        - app.py
