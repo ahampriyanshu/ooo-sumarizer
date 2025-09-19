@@ -1,390 +1,240 @@
-# OOO Summarizer Agent Challenge
-
-This is a comprehensive real-world challenge for learning **Model Context Protocol (MCP)** implementation using the **FastMCP** library. The OOO (Out of Office) Summarizer Agent demonstrates how to build a multi-source data aggregation system using FastMCP servers to create intelligent summaries and action items.
-
-## 🎯 Challenge Overview
-
-The OOO Summarizer Agent pulls data from multiple sources during an employee's absence and creates detailed summaries with prioritized action items. This challenge teaches:
-
--   **FastMCP Server Implementation**: Building multiple FastMCP servers for different data sources
--   **Data Aggregation**: Combining data from multiple sources into coherent context
--   **LLM Integration**: Using AI to generate intelligent summaries and extract action items
--   **Real-world Architecture**: Production-ready patterns for agent systems
-
-## 🏗️ Architecture
-
-The system consists of multiple FastMCP servers that simulate real-world data sources:
-
-### Dynamic Tool Discovery
-
-This implementation demonstrates the correct way to use MCP by letting the LLM discover and use tools dynamically:
-
--   **Traditional Approach**: Hardcoded tool calls (defeats MCP purpose)
--   **Dynamic Approach**: LLM discovers available tools and chooses intelligently
--   **Benefits**: Context-aware tool selection, extensibility, true MCP implementation
-
-See `DYNAMIC_TOOL_DISCOVERY.md` for detailed explanation and implementations.
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  Email Server   │    │ Calendar Server │    │  Slack Server   │
-│ (Gmail/Outlook) │    │ (Google/Outlook)│    │   (Workspace)   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         └───────────────────────┼───────────────────────┘
-                                 │
-                    ┌─────────────────---┐
-                    │  Main Orchestrator │
-                    │        Agent       │
-                    └─────────────────---┘
-                                 │
-         ┌───────────────────────┼───────────────────────┐
-         │                       │                       │
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   LLM Engine    │    │   LLM Engine    │    │  (OpenAI GPT)   │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
-
-### FastMCP Servers
-
-1. **Email Server** (`email_server.py`)
-
-    - Simulates Gmail/Outlook with emails, meeting requests, and important communications
-    - Tools: `get_emails`, `get_meeting_requests`, `get_important_emails`
-
-2. **Calendar Server** (`calendar_server.py`)
-
-    - Simulates Google Calendar/Outlook with meetings, appointments, and deadlines
-    - Tools: `get_events`, `get_conflicts`, `get_deadlines`
-
-3. **Slack Server** (`slack_server.py`)
-
-    - Simulates Slack workspace with messages, mentions, and channel activity
-    - Tools: `get_messages`, `get_mentions`, `get_direct_messages`, `get_channel_activity`
-
-## 🚀 Quick Start
-
-### Prerequisites
-
--   Python 3.8+
--   OpenAI API key
--   Git
-
-### Installation
-
-1. **Clone the repository**
-
-    ```bash
-    git clone <repository-url>
-    cd ooo-summariser
-    ```
-
-2. **Install dependencies**
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-3. **Set up environment variables**
-
-    ```bash
-    # Create .env file
-    echo "OPENAI_API_KEY=your-api-key-here" > .env
-    echo "OPENAI_MODEL=gpt-4" >> .env
-    ```
-
-4. **Seed the databases with mock data**
-
-    ```bash
-    python data/seed_data.py
-    ```
-
-5. **Run the OOO Summarizer Agent**
-
-    **Dynamic Tool Discovery (Recommended):**
-
-    ```bash
-    # Clean output (recommended)
-    python run_agent.py
-
-    # Direct execution (shows harmless cleanup warnings)
-    python main.py
-    ```
-
-    **Legacy Hardcoded Approach:**
-
-    ```bash
-    python main_hardcoded.py
-    ```
-
-## ⚠️ Runtime Error Fix
-
-The agent may show asyncio cleanup errors when exiting. These are **harmless warnings** that don't affect functionality.
-
-### **Solutions:**
-
-1. **✅ Clean output (Recommended)**:
-
-    ```bash
-    python run_agent.py
-    ```
-
-2. **✅ Alternative**:
-
-    ```bash
-    python main.py 2>/dev/null
-    ```
-
-3. **⚠️ Direct execution (Shows warnings)**:
-    ```bash
-    python main.py
-    ```
-
-### **Why This Happens:**
-
-The MCP library uses asyncio subprocesses. When the script exits, the event loop closes before subprocess cleanup completes, causing warnings during garbage collection. This is a known limitation of asyncio subprocess management.
-
-    **Demo Script:**
-
-    ```bash
-    python run_demo.py
-    ```
-
-## 🔧 Implementation
-
-### Dynamic Tool Discovery (`main.py`)
-
--   Uses mcp-use library for true MCP implementation
--   LLM discovers available tools automatically
--   Intelligent tool selection based on context
--   Production-ready approach
--   Demonstrates correct MCP principles
-
-### Legacy Approach (`main_hardcoded.py`)
-
--   Hardcoded tool calls (for comparison)
--   Fixed sequence of operations
--   Defeats MCP purpose
--   Kept for educational purposes
-
-## 📊 Mock Data
-
-The system includes realistic mock data for the OOO period (2024-01-15 to 2024-01-22):
-
-### Email Data (6 emails)
-
--   CEO strategy review meeting request
--   CTO technical architecture discussion
--   Manager project status update
--   HR performance review meeting
--   Client urgent API integration issue
--   Team weekly standup reminder
-
-### Calendar Data (5 events)
-
--   Q1 Strategy Review meeting
--   API Project Deadline
--   Technical Architecture Discussion
--   Client Demo Preparation
--   Performance Review appointment
-
-### Slack Data (6 messages)
-
--   Code review request with mention
--   Database connection issue
--   Private manager check-in
--   CEO praise for API project
--   Client timeline inquiry
--   Urgent security audit discussion
-
-## 🤖 AI-Powered Analysis
-
-The system uses OpenAI GPT-4 to generate three types of analysis:
-
-### 1. Executive Summary
-
--   Comprehensive overview of all activities
--   Key decisions and project status
--   Critical items requiring attention
-
-### 2. Action Items
-
--   Categorized by priority (Immediate, High, Medium, Low)
--   Specific tasks with due dates and context
--   Dependencies and effort estimates
-
-### 3. Priority Analysis
-
--   Urgency vs Impact matrix
--   Business critical items identification
--   Time management recommendations
-
-## 📁 Project Structure
-
-```
-ooo-summariser/
-├── README.md                 # This file
-├── requirements.txt          # Python dependencies
-├── main.py                  # Main orchestrator agent
-├── config/
-│   └── settings.py          # Configuration settings
-├── mcp_servers/
-│   ├── __init__.py
-│   ├── email_server.py      # Email MCP server
-│   ├── calendar_server.py   # Calendar MCP server
-│   ├── slack_server.py      # Slack MCP server
-├── data/
-│   ├── __init__.py
-│   ├── seed_data.py         # Database seeding script
-│   └── databases/           # SQLite databases
-│       ├── emails.db
-│       ├── calendar.db
-│       ├── slack.db
-└── prompts/
-    ├── summary_prompt.txt      # LLM prompt for summaries
-    ├── action_items_prompt.txt # LLM prompt for action items
-    └── priority_analysis_prompt.txt # LLM prompt for priorities
+# OOO Summariser Agent Challenge
+
+## Problem Statement
+
+You're returning from a vacation and your inbox is flooded with hundreds of emails, calendar invites, and Slack messages. Your team has been working on critical projects, and there are urgent issues that need your immediate attention.
+
+You need to quickly understand what happened while you were away and identify the most important items that require your action. However, manually sifting through all this information would take hours, and you need to prioritize your time effectively.
+
+## Your Task
+
+Build an AI agent that can automatically process your out-of-office (OOO) communications and generate a structured summary with prioritized action items.
+
+The agent should:
+
+-   **Collect data** from multiple sources (emails, calendar events, Slack messages)
+-   **Analyze and summarize** the key events and updates
+-   **Extract action items** that require your attention
+-   **Prioritize items** by urgency (P0, P1, P2)
+-   **Generate a structured report** in JSON format
+
+### Input Data Sources
+
+The agent must integrate with three data sources:
+
+-   **Email system** - Retrieve emails from your inbox
+-   **Calendar system** - Access calendar events and meetings
+-   **Slack workspace** - Read messages from relevant channels
+
+### Output Format
+
+The agent must return a JSON report with the following structure:
+
+```json
+{
+	"summary": "Critical production system outage requires immediate attention, along with security vulnerability patches and Q1 planning sessions. Multiple client escalations and compliance deadlines are approaching. Team coordination needed for infrastructure migration and product launch approvals.",
+	"action_items": {
+		"P0": [
+			{
+				"id": "email_001",
+				"title": "CRITICAL: Production System Outage",
+				"due_date": "2024-01-02",
+				"source": "email",
+				"context": "Production API is down and customers are affected. Immediate attention required."
+			},
+			{
+				"id": "slack_001",
+				"title": "URGENT: Security Vulnerability Patch",
+				"due_date": "2024-01-02",
+				"source": "slack",
+				"context": "Critical security vulnerability detected. Patch deployment required immediately."
+			},
+			{
+				"id": "event_001",
+				"title": "Emergency Incident Response",
+				"due_date": "2024-01-02",
+				"source": "calendar",
+				"context": "Emergency response meeting for production outage. All hands on deck."
+			}
+		],
+		"P1": [
+			{
+				"id": "email_005",
+				"title": "Q1 Strategic Planning Session",
+				"due_date": "2024-01-03",
+				"source": "email",
+				"context": "Q1 strategic planning session scheduled. Your input required for roadmap decisions."
+			},
+			{
+				"id": "slack_007",
+				"title": "Client Escalation Review",
+				"due_date": "2024-01-04",
+				"source": "slack",
+				"context": "Major client escalation needs technical review and response plan."
+			},
+			{
+				"id": "event_003",
+				"title": "Infrastructure Migration Planning",
+				"due_date": "2024-01-05",
+				"source": "calendar",
+				"context": "Infrastructure migration planning session. Technical oversight required."
+			}
+		],
+		"P2": [
+			{
+				"id": "email_012",
+				"title": "Team Building Event",
+				"due_date": "2024-01-10",
+				"source": "email",
+				"context": "Optional team building event. RSVP if interested in attending."
+			},
+			{
+				"id": "slack_015",
+				"title": "Weekly Tech Talk",
+				"due_date": "2024-01-08",
+				"source": "slack",
+				"context": "Weekly tech talk on new framework. Educational session for the team."
+			}
+		]
+	},
+	"updates": {
+		"email": {
+			"P0": [
+				{
+					"id": "email_001",
+					"title": "Production System Outage Alert",
+					"due_date": "2024-01-02",
+					"source": "email",
+					"context": "Urgent system outage affecting multiple clients. Immediate response needed."
+				},
+				{
+					"id": "email_002",
+					"title": "Security Vulnerability Notification",
+					"due_date": "2024-01-02",
+					"source": "email",
+					"context": "Critical security patch required for authentication system."
+				}
+			],
+			"P1": [
+				{
+					"id": "email_005",
+					"title": "Q1 Planning Meeting Invite",
+					"due_date": "2024-01-03",
+					"source": "email",
+					"context": "Strategic planning session for Q1 roadmap and resource allocation."
+				},
+				{
+					"id": "email_008",
+					"title": "Compliance Review Reminder",
+					"due_date": "2024-01-05",
+					"source": "email",
+					"context": "Quarterly compliance review documentation due. Please prepare materials."
+				}
+			]
+		},
+		"calendar": {
+			"P0": [
+				{
+					"id": "event_001",
+					"title": "Emergency Incident Response",
+					"due_date": "2024-01-02",
+					"source": "calendar",
+					"context": "Emergency response meeting for production system outage."
+				}
+			],
+			"P1": [
+				{
+					"id": "event_003",
+					"title": "Infrastructure Migration Planning",
+					"due_date": "2024-01-05",
+					"source": "calendar",
+					"context": "Planning session for upcoming infrastructure migration project."
+				},
+				{
+					"id": "event_004",
+					"title": "Product Launch Review",
+					"due_date": "2024-01-07",
+					"source": "calendar",
+					"context": "Final review meeting for product launch. Go/no-go decision required."
+				}
+			]
+		},
+		"slack": {
+			"P0": [
+				{
+					"id": "slack_001",
+					"title": "Security Vulnerability Alert",
+					"due_date": "2024-01-02",
+					"source": "slack",
+					"context": "Critical security vulnerability detected. Immediate patch deployment required."
+				}
+			],
+			"P1": [
+				{
+					"id": "slack_007",
+					"title": "Client Escalation Discussion",
+					"due_date": "2024-01-04",
+					"source": "slack",
+					"context": "Major client escalation requires technical review and response strategy."
+				},
+				{
+					"id": "slack_010",
+					"title": "Team Standup Reminder",
+					"due_date": "2024-01-03",
+					"source": "slack",
+					"context": "Daily standup meeting. Please prepare status updates for your projects."
+				}
+			]
+		}
+	}
+}
 ```
 
-## 🎓 Learning Objectives
+### Prioritization Logic
 
-This challenge teaches students:
+-   **P0 (Critical)**: Urgent issues requiring immediate attention (system outages, security issues, critical deadlines)
+-   **P1 (Important)**: Important items that need attention soon (meetings, project updates, client requests)
+-   **P2 (Nice to have)**: Lower priority items (general updates, non-urgent requests)
 
-### MCP Fundamentals
+## Deliverables
 
--   **Server Implementation**: How to build MCP servers with proper tool definitions
--   **Protocol Compliance**: Following MCP standards for data exchange
--   **Tool Integration**: Creating reusable tools for different data sources
--   **Error Handling**: Robust error handling and fallback strategies
+1. **Main Agent** (`main.py`) - Core orchestrator that coordinates data collection and analysis
+2. **MCP Servers** - Individual servers for email, calendar, and Slack data access
+3. **Test Suite** - Comprehensive tests covering different OOO scenarios
+4. **Documentation** - Clear setup and usage instructions
 
-### Data Management
+## Success Criteria
 
--   **Multi-source Aggregation**: Combining data from different sources
--   **Context Management**: Managing large amounts of data within context limits
--   **Data Transformation**: Converting raw data into structured formats
--   **Database Design**: SQLite schema design for different data types
+Your solution will be evaluated on:
 
-### AI Integration
+-   **Accuracy** - Correctly identifies and prioritizes important items
+-   **Completeness** - Captures all relevant information from all sources
+-   **Performance** - Efficient processing and response times
+-   **Reliability** - Handles edge cases and errors gracefully
 
--   **Prompt Engineering**: Creating effective prompts for different tasks
--   **LLM Orchestration**: Coordinating multiple LLM calls for complex analysis
--   **Output Formatting**: Structuring AI outputs for human consumption
--   **Context Optimization**: Managing token usage and context windows
+## Test Scenarios
 
-### Production Patterns
+### Scenario 1: 3-Day OOO (Jan 1-3, 2024)
 
--   **Agent Architecture**: Building scalable agent systems
--   **Configuration Management**: Environment-based configuration
--   **Logging and Monitoring**: Tracking system performance
--   **Error Recovery**: Handling failures gracefully
+-   **Expected**: Critical production issues, team standups, Q1 planning
+-   **Focus**: Immediate action items and urgent communications
 
-## 🔧 Customization
+### Scenario 2: 7-Day OOO (Jan 7-14, 2024)
 
-### Adding New Data Sources
+-   **Expected**: Project updates, client meetings, system maintenance
+-   **Focus**: Balanced mix of urgent and important items
 
-1. **Create a new MCP server** in `mcp_servers/`
-2. **Define tools** for data access
-3. **Add to the orchestrator** in `main.py`
-4. **Update prompts** if needed
+### Scenario 3: 14-Day OOO (Feb 1-14, 2024)
 
-### Modifying Analysis
+-   **Expected**: Q1 planning, security audits, Valentine's Day context
+-   **Focus**: Strategic planning and compliance requirements
 
-1. **Edit prompt files** in `prompts/`
-2. **Adjust LLM parameters** in `main.py`
-3. **Add new analysis types** as needed
+## Evaluation
 
-### Changing Data Period
+Your solution will be tested against multiple scenarios with varying data volumes and complexity. The test suite will verify:
 
-1. **Update dates** in `config/settings.py`
-2. **Re-seed databases** with new data
-3. **Run the agent** with new parameters
-
-## 🧪 Testing
-
-### Manual Testing
-
-```bash
-# Test individual MCP servers
-python -c "from mcp_servers.email_server import EmailMCPServer; print('Email server loaded successfully')"
-
-# Test data collection
-python -c "import asyncio; from main import OOOSummarizerAgent; asyncio.run(OOOSummarizerAgent().collect_data_from_servers('2024-01-15', '2024-01-22'))"
-```
-
-### Database Verification
-
-```bash
-# Check database contents
-sqlite3 data/databases/emails.db "SELECT COUNT(*) FROM emails;"
-sqlite3 data/databases/calendar.db "SELECT COUNT(*) FROM events;"
-sqlite3 data/databases/slack.db "SELECT COUNT(*) FROM messages;"
-```
-
-## 🚨 Troubleshooting
-
-### Common Issues
-
-1. **Database not found**
-
-    ```bash
-    python data/seed_data.py
-    ```
-
-2. **OpenAI API key missing**
-
-    ```bash
-    echo "OPENAI_API_KEY=your-key" > .env
-    ```
-
-3. **Import errors**
-
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. **Permission errors**
-    ```bash
-    chmod +x data/seed_data.py
-    ```
-
-## 📈 Extensions
-
-### Advanced Features
-
--   **Real API Integration**: Replace mock data with real APIs
--   **User Preferences**: Customizable summary depth and focus areas
--   **Export Formats**: PDF, email, or other output formats
--   **Scheduling**: Automated daily/weekly summaries
--   **Notifications**: Alert system for critical items
-
-### Performance Optimizations
-
--   **Caching**: Cache frequently accessed data
--   **Parallel Processing**: Concurrent data collection
--   **Incremental Updates**: Only process new data
--   **Rate Limiting**: Respect API limits
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🙏 Acknowledgments
-
--   **Model Context Protocol (MCP)** for the protocol specification
--   **OpenAI** for the GPT-4 API
--   **SQLite** for lightweight database storage
--   **Python asyncio** for concurrent operations
-
----
-
-**Happy Learning!** 🎉
-
-This challenge provides a comprehensive introduction to building real-world AI agents with MCP. The skills learned here can be applied to many other agent-building scenarios.
+-   JSON structure compliance
+-   Prioritization accuracy
+-   Data completeness
+-   Performance benchmarks
+-   Error handling
