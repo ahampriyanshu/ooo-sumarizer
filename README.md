@@ -198,43 +198,51 @@ The agent must return a JSON report with the following structure:
 
 ## Deliverables
 
-1. **Main Agent** (`main.py`) - Core orchestrator that coordinates data collection and analysis
-2. **MCP Servers** - Individual servers for email, calendar, and Slack data access
-3. **Test Suite** - Comprehensive tests covering different OOO scenarios
-4. **Documentation** - Clear setup and usage instructions
+The following files and code sections need to be completed:
+
+### 1. Prompt Files (`prompts/` directory)
+
+### 2. Main Agent Logic (`main.py`)
+
+-   LLM model configuration and setup
+-   Generate executive summary using LLM
+-   Extract action items using LLM
+-   Prioritize items using LLM
+
+### 3. Framework Already Provided
+
+-   **MCP Servers** - Email, calendar, and Slack data access
+-   **Data Collection** - Automatic data gathering from all sources
+-   **Infrastructure** - Database setup, parallel processing, error handling
 
 ## Success Criteria
 
 Your solution will be evaluated on:
 
--   **Accuracy** - Correctly identifies and prioritizes important items
--   **Completeness** - Captures all relevant information from all sources
--   **Performance** - Efficient processing and response times
--   **Reliability** - Handles edge cases and errors gracefully
+-   **Prompt Quality** - Effective prompts that guide LLM to produce accurate results
+-   **Method Implementation** - Correct logic for processing and integrating LLM responses
+-   **Output Accuracy** - Correctly identifies and prioritizes important items
+-   **JSON Compliance** - Produces valid JSON matching the required structure
 
 ## Test Scenarios
 
-### Scenario 1: 3-Day OOO (Jan 1-3, 2024)
-
--   **Expected**: Critical production issues, team standups, Q1 planning
--   **Focus**: Immediate action items and urgent communications
-
-### Scenario 2: 7-Day OOO (Jan 7-14, 2024)
-
--   **Expected**: Project updates, client meetings, system maintenance
--   **Focus**: Balanced mix of urgent and important items
-
-### Scenario 3: 14-Day OOO (Feb 1-14, 2024)
-
--   **Expected**: Q1 planning, security audits, Valentine's Day context
--   **Focus**: Strategic planning and compliance requirements
+1. Scenario 1: 3-Day OOO
+2. Scenario 2: 7-Day OOO
+3. Scenario 3: 14-Day OOO
 
 ## Evaluation
 
 Your solution will be tested against multiple scenarios with varying data volumes and complexity. The test suite will verify:
 
--   JSON structure compliance
--   Prioritization accuracy
--   Data completeness
--   Performance benchmarks
--   Error handling
+-   **JSON Structure Compliance** - Output matches the required format exactly
+-   **Prioritization Accuracy** - Items are correctly classified as P0, P1, P2
+-   **Content Quality** - Summary and action items are relevant and actionable
+-   **Data Completeness** - All important information is captured and processed
+-   **Error Handling** - Graceful handling of edge cases and invalid data
+
+## Tips for Success
+
+-   **Focus on prompt writing** - Clear, specific prompts lead to better LLM outputs
+-   **Test incrementally** - Run tests after implementing each method
+-   **Use the provided examples** - Study the test data to understand expected outputs
+-   **Handle edge cases** - Consider empty data, malformed inputs, and error scenarios
