@@ -240,9 +240,24 @@ Your solution will be tested against multiple scenarios with varying data volume
 -   **Data Completeness** - All important information is captured and processed
 -   **Error Handling** - Graceful handling of edge cases and invalid data
 
+## Streamlit Web Interface
+
+The project includes a beautiful web interface built with Streamlit for interactive testing and visualization:
+
+### Setup and Run
+
+```bash
+# Setup Streamlit environment
+bash setup/streamlit.sh
+
+# Run the web app
+streamlit run streamlit_app.py
+```
+
 ## Tips for Success
 
 -   **Focus on prompt writing** - Clear, specific prompts lead to better LLM outputs
 -   **Test incrementally** - Run tests after implementing each method
 -   **Use the provided examples** - Study the test data to understand expected outputs
 -   **Handle edge cases** - Consider empty data, malformed inputs, and error scenarios
+-   **Use the Streamlit app** - Visualize your results and test interactively

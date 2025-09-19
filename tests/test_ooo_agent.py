@@ -10,7 +10,7 @@ import subprocess
 from datetime import datetime
 
 # Test case constants
-TEST_CASES = ["test_case_1", "test_case_2", "test_case_3"]
+TEST_CASES = ["test_case_3", "test_case_1", "test_case_2"]
 
 
 def load_test_data(test_case="test_case_1"):
