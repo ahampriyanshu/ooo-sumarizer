@@ -8,7 +8,7 @@ configuration:
     ide_config:
         default_open_files:
             - main.py
-            - prompts/summary_prompt.txt
+            - prompts/data_collection_prompt.txt
             - prompts/action_items_prompt.txt
             - prompts/priority_analysis_prompt.txt
         project_menu:

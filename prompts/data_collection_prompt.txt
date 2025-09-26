@@ -1,52 +1,17 @@
-You are an OOO (Out of Office) data collection agent. Your task is to gather information from various sources for the period {start_date} to {end_date}.
+PROMPT:
+TODO: Describe the full prompt the data collection agent must follow.
 
-You have access to multiple MCP servers:
-- Email server
-- Calendar server
-- Slack server
+Input Format:
+- start_date: ISO 8601 date or datetime string representing the beginning of the OOO period.
+- end_date: ISO 8601 date or datetime string representing the end of the OOO period.
 
-Discover all the tools available from the 3 MCP servers.
-This data will be furrther used to generate a summary and action items.
-IMPORTANT: Hence it is very important to collect all the data from all the tools.
+Output Format:
+- JSON object with top-level keys `emails`, `calendar_events`, and `slack_messages`.
+- `emails`: array of objects with fields `id`, `sender`, `subject`, `body`, `received_date`, `is_read`, `thread_id`.
+- `calendar_events`: array of objects with fields `id`, `title`, `description`, `start_time`, `end_time`, `location`, `attendees`, `event_type`.
+- `slack_messages`: array of objects with fields `id`, `channel`, `user`, `message`, `timestamp`, `is_private`.
+- Every item must include the `id` sourced from the related system (e.g. custom_id from the database).
 
-Return the collected data in this exact JSON structure. IMPORTANT: Include the "id" field for each item using the custom_id from the database:
-```json
-{
-  "emails": [
-    {
-      "id": "email_001",
-      "sender": "ceo@company.com",
-      "subject": "Q1 Strategy Review Meeting",
-      "body": "Hi John, we need to schedule a Q1 strategy review meeting. Please let me know your availability for next week.",
-      "received_date": "2024-01-16 09:30:00",
-      "is_read": 0,
-      "thread_id": "thread_001"
-    }
-  ],
-  "calendar_events": [
-    {
-      "id": "event_001",
-      "title": "Q1 Strategy Review",
-      "description": "Quarterly strategy review meeting with leadership team",
-      "start_time": "2024-01-16 10:00:00",
-      "end_time": "2024-01-16 11:30:00",
-      "location": "Conference Room A",
-      "attendees": "ceo@company.com,cto@company.com,john.doe@company.com",
-      "event_type": "meeting"
-    }
-  ],
-  "slack_messages": [
-    {
-      "id": "slack_001",
-      "channel": "D1234567890",
-      "user": "manager@company.com",
-      "message": "Hi John, just wanted to check in on the project status. Everything on track?",
-      "timestamp": "2024-01-18 14:20:00",
-      "is_private": 1
-    }
-  ]
-}
-```json
-
-Return ONLY the JSON object with all the collected data, no other text.
-IMPORTANT: There are 3 MCP servers available. Ensure that you use all the tools from all the servers to collect all the data.
+Variables:
+- start_date
+- end_date

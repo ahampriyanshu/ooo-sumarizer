@@ -47,14 +47,7 @@ class OOOSummarizerAgent:
                     'command': 'python',
                     'args': ['mcp_servers/email_server.py']
                 },
-                'calendar': {
-                    'command': 'python', 
-                    'args': ['mcp_servers/calendar_server.py']
-                },
-                'slack': {
-                    'command': 'python',
-                    'args': ['mcp_servers/slack_server.py']
-                },
+                # TODO: Define the rest of the servers
             }
         }
         

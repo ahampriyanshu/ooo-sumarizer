@@ -6,8 +6,6 @@ You're returning from a vacation and your inbox is flooded with hundreds of emai
 
 You need to quickly understand what happened while you were away and identify the most important items that require your action. However, manually sifting through all this information would take hours, and you need to prioritize your time effectively.
 
-## Your Task
-
 Build an AI agent that can automatically process your out-of-office (OOO) communications and generate a structured summary with prioritized action items.
 
 The agent should:
@@ -17,6 +15,11 @@ The agent should:
 -   **Extract action items** that require your attention
 -   **Prioritize items** by urgency (P0, P1, P2)
 -   **Generate a structured report** in JSON format
+
+## Your Task
+
+1. Give access to all MCP servers to the agent to collect the data.
+2. Write the prompt for the agent to collect all the data.
 
 ### Input Data Sources
 
