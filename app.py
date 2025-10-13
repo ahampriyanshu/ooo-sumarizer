@@ -91,11 +91,14 @@ st.markdown(
         color: white !important;
     }
     
-    /* Header container */
+    /* Header container with border */
     .header-container {
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 1rem !important;
         padding: 2rem !important;
         margin: 2rem auto !important;
         max-width: 800px !important;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
         color: white !important;
     }
     
@@ -606,14 +609,16 @@ def run_test_case(test_case, debug=False):
                 st.error("No valid JSON found in output")
                 if debug:
                     st.text("Raw output:")
-                    st.text(result.stdout)
-                    st.text("Raw stderr:")
-                    st.text(result.stderr)
+                    st.text(result.stdout if result.stdout else "(empty)")
+                    if result.stderr:
+                        st.text("Raw stderr:")
+                        st.text(result.stderr)
                 return None
         else:
             st.error(f"Command failed with return code {result.returncode}")
-            st.text("Error output:")
-            st.text(result.stderr)
+            if result.stderr:
+                st.text("Error output:")
+                st.text(result.stderr)
             return None
 
     except subprocess.TimeoutExpired:

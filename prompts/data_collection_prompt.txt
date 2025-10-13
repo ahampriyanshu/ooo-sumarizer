@@ -1,1 +1,12 @@
-# Candidate to fill prompt here. Use {{ variable }} for dynamic values.
+# TODO: Write the prompt for Data Collection Agent
+# Collect data from emails, calendar events, and Slack messages for the OOO period
+#
+# Required Output Format:
+# {
+#   "emails": [...],
+#   "calendar_events": [...],
+#   "slack_messages": [...]
+# }
+#
+# The start_date and end_date are passed along with the prompt; focus on writing instructions only.
+# Use {{ variable_name }} placeholders for dynamic values.
