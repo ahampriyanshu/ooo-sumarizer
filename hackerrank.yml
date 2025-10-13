@@ -7,10 +7,8 @@ configuration:
             - unit.xml
     ide_config:
         default_open_files:
-            - main.py
+            - mcp_utils.py
             - prompts/data_collection_prompt.txt
-            - prompts/action_items_prompt.txt
-            - prompts/priority_analysis_prompt.txt
         project_menu:
             install: bash setup/install.sh
             run: bash setup/run.sh

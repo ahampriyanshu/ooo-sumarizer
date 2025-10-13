@@ -14,9 +14,9 @@ import logging
 from datetime import datetime
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
-from mcp_use import MCPAgent, MCPClient
 
-# Load environment variables
+from mcp_utils import get_mcp_agent
+
 load_dotenv()
 
 # Suppress warnings
@@ -27,7 +27,6 @@ logging.getLogger("mcp_use").setLevel(logging.ERROR)
 
 class OOOSummarizerAgent:
     def __init__(self):
-        # Initialize LangChain OpenAI client (required for mcp-use)
         api_key = os.getenv("OPENAI_API_KEY")
         base_url = os.getenv("OPENAI_API_BASE")
         if not api_key:
@@ -39,24 +38,8 @@ class OOOSummarizerAgent:
             temperature=0.1,
             base_url=base_url,
         )
-        
-        # Configure MCP servers for dynamic tool discovery
-        self.mcp_config = {
-            'mcpServers': {
-                'email': {
-                    'command': 'python',
-                    'args': ['mcp_servers/email_server.py']
-                },
-                # TODO: Define the rest of the servers
-            }
-        }
-        
-        # Create MCP client and agent for dynamic tool discovery
-        self.mcp_client = MCPClient.from_dict(self.mcp_config)
-        self.agent = MCPAgent(
-            llm=self.llm,
-            client=self.mcp_client
-        )
+
+        self.agent = get_mcp_agent(self.llm)
 
     async def generate_report(self, start_date: str = "2024-01-01", end_date: str = "2024-01-03"):
         """Generate complete OOO summary report using dynamic tool discovery"""
@@ -73,8 +56,8 @@ class OOOSummarizerAgent:
                 data_collection_prompt = f.read()
             
             # Replace placeholders manually to avoid conflicts with JSON braces
-            data_collection_prompt = data_collection_prompt.replace("{start_date}", start_date)
-            data_collection_prompt = data_collection_prompt.replace("{end_date}", end_date)
+            data_collection_prompt = data_collection_prompt.replace("{{ start_date }}", start_date)
+            data_collection_prompt = data_collection_prompt.replace("{{ end_date }}", end_date)
             data_result = await self.agent.run(data_collection_prompt)
             
             async def generate_summary():

@@ -1,17 +1,1 @@
-PROMPT:
-TODO: Describe the full prompt the data collection agent must follow.
-
-Input Format:
-- start_date: ISO 8601 date or datetime string representing the beginning of the OOO period.
-- end_date: ISO 8601 date or datetime string representing the end of the OOO period.
-
-Output Format:
-- JSON object with top-level keys `emails`, `calendar_events`, and `slack_messages`.
-- `emails`: array of objects with fields `id`, `sender`, `subject`, `body`, `received_date`, `is_read`, `thread_id`.
-- `calendar_events`: array of objects with fields `id`, `title`, `description`, `start_time`, `end_time`, `location`, `attendees`, `event_type`.
-- `slack_messages`: array of objects with fields `id`, `channel`, `user`, `message`, `timestamp`, `is_private`.
-- Every item must include the `id` sourced from the related system (e.g. custom_id from the database).
-
-Variables:
-- start_date
-- end_date
+# Candidate to fill prompt here. Use {{ variable }} for dynamic values.
