@@ -118,12 +118,8 @@ The following files and code sections need to be completed:
 
 The project includes a beautiful web interface built with Streamlit for interactive testing and visualization:
 
-### Setup and Run
+### Run the web app
 
 ```bash
-# Setup Streamlit environment
-bash setup/streamlit.sh
-
-# Run the web app
-streamlit run streamlit_app.py
+streamlit run app.py
 ```

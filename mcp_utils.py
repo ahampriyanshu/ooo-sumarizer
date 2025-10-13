@@ -28,7 +28,7 @@ def get_mcp_config() -> Dict[str, Any]:
         }
     }
 
-def create_mcp_client() -> MCPClient:
+def get_mcp_client() -> MCPClient:
     """
     Create MCP client from configuration.
     

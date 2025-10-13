@@ -15,7 +15,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 
-from mcp_utils import get_mcp_agent
+from mcp_utils import get_mcp_agent, get_mcp_client
 
 load_dotenv()
 
@@ -39,6 +39,7 @@ class OOOSummarizerAgent:
             base_url=base_url,
         )
 
+        self.mcp_client = get_mcp_client()
         self.agent = get_mcp_agent(self.llm)
 
     async def generate_report(self, start_date: str = "2024-01-01", end_date: str = "2024-01-03"):
