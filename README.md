@@ -1,34 +1,40 @@
-# OOO Summariser Agent Challenge
+You're returning from vacation with hundreds of emails, calendar invites, and Slack messages. Build an AI agent that automatically processes your out-of-office (OOO) communications and generates a structured summary with prioritized action items.
 
-## Problem Statement
+### Task
 
-You're returning from a vacation and there are hundreds of emails, calendar invites, and Slack messages. You need to quickly understand what happened while you were away and identify the most important items that require your action.
+Build an AI-powered OOO summarizer that:
+- Collects data from multiple sources (emails, calendar events, Slack messages)
+- Analyzes and summarizes key events and updates
+- Extracts action items requiring your attention
+- Prioritizes items by urgency (P0, P1, P2)
+- Generates a structured JSON report
 
-Build an AI agent that can automatically process your out-of-office (OOO) communications and generate a structured summary with prioritized action items.
+### Requirements
 
-The agent should:
+To complete the system, you need to implement the following:
 
--   **Collect data** from multiple sources (emails, calendar events, Slack messages)
--   **Analyze and summarize** the key events and updates
--   **Extract action items** that require your attention
--   **Prioritize items** by urgency (P0, P1, P2)
--   **Generate a structured report** in JSON format
+#### 1. MCP Utilities
 
-## Your Task
+Implement MCP server configuration in `mcp_utils.py`:
+- Configure email, calendar, and Slack server connections
+- Set up proper server initialization
 
-The following files and code sections need to be completed:
+#### 2. Prompt Files
 
-### 1. MCP utilities (`mcp_utils.py`)
+Write prompt files that define agent behavior in `prompts/`:
 
--   MCP servers configuration and setup
+- `data_collection_prompt.txt` - Collects data from multiple sources
+- `summary_prompt.txt` - Generates executive summary
+- `action_items_prompt.txt` - Extracts actionable items
+- `priority_analysis_prompt.txt` - Prioritizes items by urgency
 
-### 2. Prompt Files (`prompts/` directory)
+#### 3. Data Collection Format
 
--   prompts/data_collection_prompt.txt
--   Input Format:
-    -   start_date: ISO 8601 date or datetime string representing the beginning of the OOO period.
-    -   end_date: ISO 8601 date or datetime string representing the end of the OOO period.
-    -   Output Format for data collection prompt:
+The data collection prompt receives:
+- `start_date`: ISO 8601 datetime for OOO period start
+- `end_date`: ISO 8601 datetime for OOO period end
+
+Expected output format:
 
 ```json
 {
@@ -99,27 +105,18 @@ The following files and code sections need to be completed:
 }
 ```
 
-### Evaluation Criteria
-
--   **Prompt Accurray** - Effective prompts that guide LLM to produce accurate results
--   **JSON Compliance** - Produces valid JSON matching the required structure
--   **Method Implementation** - Correct logic for setting up the MCP servers
--   **Output Accuracy** - Correctly identifies and prioritizes important items
--   **Prioritization Accuracy** - Items are correctly classified as P0, P1, P2
--   **Content Quality** - Summary and action items are relevant and actionable
-
 ### Test Scenarios
 
-1. Scenario 1: 3-Day OOO
-2. Scenario 2: 7-Day OOO
-3. Scenario 3: 14-Day OOO
+The system is tested across three scenarios:
+- **Scenario 1**: 3-day OOO period
+- **Scenario 2**: 7-day OOO period  
+- **Scenario 3**: 14-day OOO period
 
-## Streamlit Web Interface
+### Best Practices
 
-The project includes a web interface built with Streamlit for interactive testing and visualization:
-
-### Run the web app
-
-```bash
-streamlit run app.py --server.port 8000
-```
+- **Prompt Engineering**: Write clear, deterministic prompts with examples for consistent behavior
+- **JSON Compliance**: Ensure all outputs are valid JSON matching required structures
+- **MCP Configuration**: Properly configure and initialize all MCP servers
+- **Prioritization**: Correctly classify items as P0 (critical), P1 (high), P2 (medium)
+- **Content Quality**: Generate relevant, actionable summaries and action items
+- **Interactive Testing**: Use the Streamlit UI to test your agent in real time

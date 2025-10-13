@@ -13,29 +13,30 @@ from fastmcp import FastMCP
 # Create FastMCP server instance
 mcp = FastMCP("slack-server")
 
+
 @mcp.tool()
 def get_messages(start_date: str, end_date: str, channel: Optional[str] = None) -> str:
     """Get Slack messages for a specific date range"""
     conn = sqlite3.connect("data/databases/slack.db")
     cursor = conn.cursor()
-    
+
     query = """
     SELECT custom_id, channel, user, message, timestamp, thread_id, is_mention
     FROM messages 
     WHERE timestamp BETWEEN ? AND ?
     """
     params = [start_date, end_date]
-    
+
     if channel:
         query += " AND channel = ?"
         params.append(channel)
-    
+
     query += " ORDER BY timestamp DESC"
-    
+
     cursor.execute(query, params)
     messages = cursor.fetchall()
     conn.close()
-    
+
     result = []
     for message in messages:
         message_data = {
@@ -45,18 +46,19 @@ def get_messages(start_date: str, end_date: str, channel: Optional[str] = None) 
             "message": message[3],
             "timestamp": message[4],
             "thread_id": message[5],
-            "is_mention": bool(message[6])
+            "is_mention": bool(message[6]),
         }
         result.append(message_data)
-    
+
     return json.dumps(result, indent=2)
+
 
 @mcp.tool()
 def get_mentions(start_date: str, end_date: str) -> str:
     """Get messages where the user was mentioned"""
     conn = sqlite3.connect("data/databases/slack.db")
     cursor = conn.cursor()
-    
+
     query = """
     SELECT id, channel, user, message, timestamp, thread_id
     FROM messages 
@@ -64,11 +66,11 @@ def get_mentions(start_date: str, end_date: str) -> str:
     AND message LIKE '%@john.doe%'
     ORDER BY timestamp DESC
     """
-    
+
     cursor.execute(query, [start_date, end_date])
     mentions = cursor.fetchall()
     conn.close()
-    
+
     result = []
     for mention in mentions:
         mention_data = {
@@ -77,18 +79,19 @@ def get_mentions(start_date: str, end_date: str) -> str:
             "user": mention[2],
             "message": mention[3],
             "timestamp": mention[4],
-            "thread_id": mention[5]
+            "thread_id": mention[5],
         }
         result.append(mention_data)
-    
+
     return json.dumps(result, indent=2)
+
 
 @mcp.tool()
 def get_direct_messages(start_date: str, end_date: str) -> str:
     """Get direct messages and private conversations"""
     conn = sqlite3.connect("data/databases/slack.db")
     cursor = conn.cursor()
-    
+
     query = """
     SELECT id, channel, user, message, timestamp, thread_id, is_mention
     FROM messages 
@@ -96,11 +99,11 @@ def get_direct_messages(start_date: str, end_date: str) -> str:
     AND channel LIKE 'D%'
     ORDER BY timestamp DESC
     """
-    
+
     cursor.execute(query, [start_date, end_date])
     dms = cursor.fetchall()
     conn.close()
-    
+
     result = []
     for dm in dms:
         dm_data = {
@@ -110,18 +113,21 @@ def get_direct_messages(start_date: str, end_date: str) -> str:
             "message": dm[3],
             "timestamp": dm[4],
             "thread_id": dm[5],
-            "is_mention": bool(dm[6])
+            "is_mention": bool(dm[6]),
         }
         result.append(dm_data)
-    
+
     return json.dumps(result, indent=2)
 
+
 @mcp.tool()
-def get_channel_activity(start_date: str, end_date: str, channels: Optional[List[str]] = None) -> str:
+def get_channel_activity(
+    start_date: str, end_date: str, channels: Optional[List[str]] = None
+) -> str:
     """Get activity summary for specific channels"""
     conn = sqlite3.connect("data/databases/slack.db")
     cursor = conn.cursor()
-    
+
     if channels:
         placeholders = ",".join(["?" for _ in channels])
         query = f"""
@@ -148,11 +154,11 @@ def get_channel_activity(start_date: str, end_date: str, channels: Optional[List
         ORDER BY message_count DESC
         """
         params = [start_date, end_date]
-    
+
     cursor.execute(query, params)
     activity = cursor.fetchall()
     conn.close()
-    
+
     result = []
     for channel_activity in activity:
         activity_data = {
@@ -160,11 +166,12 @@ def get_channel_activity(start_date: str, end_date: str, channels: Optional[List
             "message_count": channel_activity[1],
             "unique_users": channel_activity[2],
             "first_message": channel_activity[3],
-            "last_message": channel_activity[4]
+            "last_message": channel_activity[4],
         }
         result.append(activity_data)
-    
+
     return json.dumps(result, indent=2)
+
 
 if __name__ == "__main__":
     mcp.run()

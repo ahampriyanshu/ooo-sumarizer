@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# OOO Summariser Test Cleanup Script
-# This script cleans up all files created during test runs
+echo "🧹 Cleaning workspace..."
 
 # Remove all generated reports
 rm -f reports/*.json

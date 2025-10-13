@@ -14,11 +14,12 @@ st.set_page_config(
     page_title="OOO Summariser Agent",
     page_icon="📧",
     layout="centered",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed",
 )
 
 # Custom CSS for dark theme styling
-st.markdown("""
+st.markdown(
+    """
 <style>
     /* Force override all Streamlit defaults */
     * {
@@ -90,15 +91,11 @@ st.markdown("""
         color: white !important;
     }
     
-    /* Header container with border */
+    /* Header container */
     .header-container {
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        border-radius: 1rem !important;
         padding: 2rem !important;
         margin: 2rem auto !important;
         max-width: 800px !important;
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
-        box-shadow: 0 4px 20px rgba(74, 137, 243, 0.2) !important;
         color: white !important;
     }
     
@@ -426,10 +423,13 @@ st.markdown("""
         display: none !important;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
 # JavaScript to hide the header and fix button text
-st.markdown("""
+st.markdown(
+    """
 <script>
     // Hide the Streamlit header and fix button text
     function fixUI() {
@@ -480,19 +480,22 @@ st.markdown("""
     // Run periodically to ensure fixes stick
     setInterval(fixUI, 1000);
 </script>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
+
 
 def extract_json_from_output(output, debug=False):
     """Extract JSON from agent output using multiple methods"""
     if not output or not output.strip():
         return None
-    
+
     output = output.strip()
-    
+
     if debug:
         print(f"DEBUG: Input output length: {len(output)}")
         print(f"DEBUG: First 200 chars: {output[:200]}")
-    
+
     # Method 1: Look for markdown code blocks
     if "```json" in output:
         json_start = output.find("```json") + 7
@@ -500,7 +503,9 @@ def extract_json_from_output(output, debug=False):
         if json_end > json_start:
             json_str = output[json_start:json_end].strip()
             if debug:
-                print(f"DEBUG: Method 1 - Found markdown JSON block: {json_str[:100]}...")
+                print(
+                    f"DEBUG: Method 1 - Found markdown JSON block: {json_str[:100]}..."
+                )
             try:
                 result = json.loads(json_str)
                 if debug:
@@ -510,7 +515,7 @@ def extract_json_from_output(output, debug=False):
                 if debug:
                     print(f"DEBUG: Method 1 - JSON decode error: {e}")
                 pass
-    
+
     # Method 2: Look for JSON object starting with { and ending with }
     if "{" in output and "}" in output:
         json_start = output.find("{")
@@ -528,9 +533,9 @@ def extract_json_from_output(output, debug=False):
                 if debug:
                     print(f"DEBUG: Method 2 - JSON decode error: {e}")
                 pass
-    
+
     # Method 3: Try to find JSON using regex
-    json_pattern = r'\{.*\}'
+    json_pattern = r"\{.*\}"
     matches = re.findall(json_pattern, output, re.DOTALL)
     if debug:
         print(f"DEBUG: Method 3 - Found {len(matches)} regex matches")
@@ -546,7 +551,7 @@ def extract_json_from_output(output, debug=False):
             if debug:
                 print(f"DEBUG: Method 3 - JSON decode error for match {i+1}: {e}")
             continue
-    
+
     # Method 4: Try the entire output as JSON
     if debug:
         print("DEBUG: Method 4 - Trying entire output as JSON")
@@ -559,37 +564,40 @@ def extract_json_from_output(output, debug=False):
         if debug:
             print(f"DEBUG: Method 4 - JSON decode error: {e}")
         pass
-    
+
     if debug:
         print("DEBUG: All methods failed to parse JSON")
     return None
+
 
 def run_test_case(test_case, debug=False):
     """Run a specific test case and return the agent report"""
     try:
         # Run the agent for the specific test case
         if test_case == "test_case_1":
-            cmd = ["python3", "run_agent.py", "2024-01-01", "2024-01-03"]
+            cmd = ["python3", "summarizer.py", "2024-01-01", "2024-01-03"]
         elif test_case == "test_case_2":
-            cmd = ["python3", "run_agent.py", "2024-01-07", "2024-01-14"]
+            cmd = ["python3", "summarizer.py", "2024-01-07", "2024-01-14"]
         elif test_case == "test_case_3":
-            cmd = ["python3", "run_agent.py", "2024-02-01", "2024-02-14"]
+            cmd = ["python3", "summarizer.py", "2024-02-01", "2024-02-14"]
         else:
             return None
-        
+
         # Execute the command
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
-        
+
         if result.returncode == 0:
             # Parse the JSON output using the helper function
             parsed_json = extract_json_from_output(result.stdout, debug=debug)
-            
+
             if parsed_json:
                 # Ensure we return a dictionary
                 if isinstance(parsed_json, dict):
                     return parsed_json
                 else:
-                    st.error(f"JSON parsing returned {type(parsed_json).__name__}, expected dict")
+                    st.error(
+                        f"JSON parsing returned {type(parsed_json).__name__}, expected dict"
+                    )
                     if debug:
                         st.text("Parsed JSON:")
                         st.text(str(parsed_json))
@@ -607,7 +615,7 @@ def run_test_case(test_case, debug=False):
             st.text("Error output:")
             st.text(result.stderr)
             return None
-            
+
     except subprocess.TimeoutExpired:
         st.error("Test case execution timed out (5 minutes)")
         return None
@@ -615,46 +623,53 @@ def run_test_case(test_case, debug=False):
         st.error(f"Error running test case: {e}")
         return None
 
+
 def run_all_test_cases(debug=False):
     """Run all test cases and return their reports"""
     reports = {}
     test_cases = ["test_case_1", "test_case_2", "test_case_3"]
-    
+
     progress_bar = st.progress(0)
     status_text = st.empty()
-    
+
     for i, test_case in enumerate(test_cases):
         status_text.text(f"Running {test_case}...")
         report = run_test_case(test_case, debug=debug)
         reports[test_case] = report
         progress_bar.progress((i + 1) / len(test_cases))
-    
+
     status_text.text("All test cases completed!")
     return reports
+
 
 def display_report(report, test_case_name=None):
     """Display a beautiful UI for the JSON report"""
     if not report:
         st.error("No report data to display")
         return
-    
+
     # Check if report is a dictionary (parsed JSON)
     if not isinstance(report, dict):
-        st.error(f"Invalid report format. Expected dictionary, got {type(report).__name__}")
+        st.error(
+            f"Invalid report format. Expected dictionary, got {type(report).__name__}"
+        )
         if isinstance(report, str):
             st.text("Raw report data:")
             st.text(report)
         return
-    
+
     # Header
     if test_case_name:
-        st.markdown(f"<h2>📊 Report: {test_case_name.replace('_', ' ').title()}</h2>", unsafe_allow_html=True)
+        st.markdown(
+            f"<h2>Report: {test_case_name.replace('_', ' ').title()}</h2>",
+            unsafe_allow_html=True,
+        )
     else:
-        st.markdown("<h2>📊 OOO Summary Report</h2>", unsafe_allow_html=True)
-    
+        st.markdown("<h2>OOO Summary Report</h2>", unsafe_allow_html=True)
+
     # Basic info
     col1, col2, col3, col4 = st.columns(4)
-    
+
     with col1:
         # OOO Period - extract from test case context since it's not in the JSON
         if test_case_name:
@@ -669,287 +684,271 @@ def display_report(report, test_case_name=None):
         else:
             start_date, end_date = "N/A", "N/A"
         st.metric("OOO Period", f"{start_date} to {end_date}")
-    
+
     with col2:
         # Handle different action_items structures
-        if isinstance(report.get('action_items'), dict):
+        if isinstance(report.get("action_items"), dict):
             # New structure: {"P0": [...], "P1": [...], "P2": [...]}
-            total_items = sum(len(items) for items in report.get('action_items', {}).values())
+            total_items = sum(
+                len(items) for items in report.get("action_items", {}).values()
+            )
         else:
             # Old structure: [...]
-            total_items = len(report.get('action_items', []))
+            total_items = len(report.get("action_items", []))
         st.metric("Total Action Items", total_items)
-    
+
     with col3:
         # Handle different action_items structures
-        if isinstance(report.get('action_items'), dict):
-            p0_count = len(report.get('action_items', {}).get('P0', []))
+        if isinstance(report.get("action_items"), dict):
+            p0_count = len(report.get("action_items", {}).get("P0", []))
         else:
-            p0_count = len([item for item in report.get('action_items', []) if item.get('priority') == 'P0'])
+            p0_count = len(
+                [
+                    item
+                    for item in report.get("action_items", [])
+                    if item.get("priority") == "P0"
+                ]
+            )
         st.metric("P0 Items", p0_count)
-    
+
     with col4:
         # Handle different action_items structures
-        if isinstance(report.get('action_items'), dict):
-            p1_count = len(report.get('action_items', {}).get('P1', []))
+        if isinstance(report.get("action_items"), dict):
+            p1_count = len(report.get("action_items", {}).get("P1", []))
         else:
-            p1_count = len([item for item in report.get('action_items', []) if item.get('priority') == 'P1'])
+            p1_count = len(
+                [
+                    item
+                    for item in report.get("action_items", [])
+                    if item.get("priority") == "P1"
+                ]
+            )
         st.metric("P1 Items", p1_count)
-    
+
     st.divider()
-    
+
     # Executive Summary
-    st.markdown("### 📝 Summary")
+    st.markdown("### Summary")
     # Use the correct field name from README structure
-    summary = report.get('summary', 'No summary available')
+    summary = report.get("summary", "No summary available")
     st.markdown(f"<div class='metric-card'>{summary}</div>", unsafe_allow_html=True)
-    
+
     st.divider()
-    
+
     # Action Items by Priority
-    action_items = report.get('action_items', [])
+    action_items = report.get("action_items", [])
     if action_items:
-        st.markdown("### ✅ Action Items")
-        
+        st.markdown("### Action Items")
+
         # Handle different action_items structures
         if isinstance(action_items, dict):
             # New structure: {"P0": [...], "P1": [...], "P2": [...]}
-            p0_items = action_items.get('P0', [])
-            p1_items = action_items.get('P1', [])
-            p2_items = action_items.get('P2', [])
+            p0_items = action_items.get("P0", [])
+            p1_items = action_items.get("P1", [])
+            p2_items = action_items.get("P2", [])
         else:
             # Old structure: [...]
-            p0_items = [item for item in action_items if item.get('priority') == 'P0']
-            p1_items = [item for item in action_items if item.get('priority') == 'P1']
-            p2_items = [item for item in action_items if item.get('priority') == 'P2']
-        
+            p0_items = [item for item in action_items if item.get("priority") == "P0"]
+            p1_items = [item for item in action_items if item.get("priority") == "P1"]
+            p2_items = [item for item in action_items if item.get("priority") == "P2"]
+
         # P0 Items
         if p0_items:
             st.markdown("#### 🔴 P0 - Critical")
             for item in p0_items:
-                title = item.get('title', 'Untitled')
-                source = item.get('source', 'Unknown')
-                due_date = item.get('due_date', 'Not specified')
-                description = item.get('description', item.get('context', 'No description'))
-                st.markdown(f"""
+                title = item.get("title", "Untitled")
+                source = item.get("source", "Unknown")
+                due_date = item.get("due_date", "Not specified")
+                description = item.get(
+                    "description", item.get("context", "No description")
+                )
+                st.markdown(
+                    f"""
                 <div class='priority-p0'>
                     <strong>{title}</strong><br>
                     <em>Source:</em> {source}<br>
                     <em>Due:</em> {due_date}<br>
                     <em>Description:</em> {description}
                 </div>
-                """, unsafe_allow_html=True)
-        
+                """,
+                    unsafe_allow_html=True,
+                )
+
         # P1 Items
         if p1_items:
             st.markdown("#### 🟡 P1 - Important")
             for item in p1_items:
-                title = item.get('title', 'Untitled')
-                source = item.get('source', 'Unknown')
-                due_date = item.get('due_date', 'Not specified')
-                description = item.get('description', item.get('context', 'No description'))
-                st.markdown(f"""
+                title = item.get("title", "Untitled")
+                source = item.get("source", "Unknown")
+                due_date = item.get("due_date", "Not specified")
+                description = item.get(
+                    "description", item.get("context", "No description")
+                )
+                st.markdown(
+                    f"""
                 <div class='priority-p1'>
                     <strong>{title}</strong><br>
                     <em>Source:</em> {source}<br>
                     <em>Due:</em> {due_date}<br>
                     <em>Description:</em> {description}
                 </div>
-                """, unsafe_allow_html=True)
-        
+                """,
+                    unsafe_allow_html=True,
+                )
+
         # P2 Items
         if p2_items:
             st.markdown("#### 🟢 P2 - Nice to Have")
             for item in p2_items:
-                title = item.get('title', 'Untitled')
-                source = item.get('source', 'Unknown')
-                due_date = item.get('due_date', 'Not specified')
-                description = item.get('description', item.get('context', 'No description'))
-                st.markdown(f"""
+                title = item.get("title", "Untitled")
+                source = item.get("source", "Unknown")
+                due_date = item.get("due_date", "Not specified")
+                description = item.get(
+                    "description", item.get("context", "No description")
+                )
+                st.markdown(
+                    f"""
                 <div class='priority-p2'>
                     <strong>{title}</strong><br>
                     <em>Source:</em> {source}<br>
                     <em>Due:</em> {due_date}<br>
                     <em>Description:</em> {description}
                 </div>
-                """, unsafe_allow_html=True)
-    
+                """,
+                    unsafe_allow_html=True,
+                )
+
     # Data Sources Summary (using updates structure from README)
-    updates = report.get('updates', {})
+    updates = report.get("updates", {})
     if updates:
         st.divider()
-        st.markdown("### 📊 Data Sources Summary")
-        
+        st.markdown("### Data Sources Summary")
+
         col1, col2, col3 = st.columns(3)
-        
+
         with col1:
-            email_items = updates.get('email', {})
-            email_count = len(email_items.get('P0', [])) + len(email_items.get('P1', []))
-            st.metric("📧 Emails", email_count)
-        
+            email_items = updates.get("email", {})
+            email_count = len(email_items.get("P0", [])) + len(
+                email_items.get("P1", [])
+            )
+            st.metric("Emails", email_count)
+
         with col2:
-            calendar_items = updates.get('calendar', {})
-            calendar_count = len(calendar_items.get('P0', [])) + len(calendar_items.get('P1', []))
-            st.metric("📅 Calendar Events", calendar_count)
-        
+            calendar_items = updates.get("calendar", {})
+            calendar_count = len(calendar_items.get("P0", [])) + len(
+                calendar_items.get("P1", [])
+            )
+            st.metric("Calendar Events", calendar_count)
+
         with col3:
-            slack_items = updates.get('slack', {})
-            slack_count = len(slack_items.get('P0', [])) + len(slack_items.get('P1', []))
-            st.metric("💬 Slack Messages", slack_count)
+            slack_items = updates.get("slack", {})
+            slack_count = len(slack_items.get("P0", [])) + len(
+                slack_items.get("P1", [])
+            )
+            st.metric("Slack Messages", slack_count)
+
 
 def main():
     # Main header with border
-    st.markdown('<div class="header-container"><div class="main-header">OOO Summariser Agent</div><div class="main-subtitle">Automated Out-of-Office Communication Analysis and Action Item Prioritization</div></div>', unsafe_allow_html=True)
-    
+    st.markdown(
+        '<div class="header-container"><div class="main-header">OOO Summariser Agent</div><div class="main-subtitle">Automated Out-of-Office Communication Analysis and Action Item Prioritization</div></div>',
+        unsafe_allow_html=True,
+    )
+
     # Test case selection section
-    st.markdown('<div class="test-cases-header"><h2>Test Cases</h2><p>Select a test case to run the OOO Summariser Agent:</p></div>', unsafe_allow_html=True)
-    
+    st.markdown(
+        '<div class="test-cases-header"><h2>Test Cases</h2><p>Select a test case to run the OOO Summariser Agent:</p></div>',
+        unsafe_allow_html=True,
+    )
+
     # Test case selection dropdown
     test_case_options = [
         "Select a test case...",
         "Test Case 1 (3-day OOO)",
-        "Test Case 2 (7-day OOO)", 
+        "Test Case 2 (7-day OOO)",
         "Test Case 3 (14-day OOO)",
-        "Run All Test Cases"
+        "Run All Test Cases",
     ]
-    
+
     selected_test_case = st.selectbox(
         "Select Test Case:",
         options=test_case_options,
-        help="Choose a test case to run the OOO Summariser Agent"
+        help="Choose a test case to run the OOO Summariser Agent",
     )
-    
+
     # Run button and debug mode checkbox in same row, centered with gap
     col1, col2, col3 = st.columns([0.5, 3, 0.5])
-    
+
     with col1:
         st.empty()  # Empty space for centering
-    
+
     with col2:
         # Run button and debug checkbox in center column
         button_col, gap_col, checkbox_col = st.columns([2, 0.5, 2])
-        
+
         with checkbox_col:
             # Debug mode checkbox (define first for scope)
-            debug_mode = st.checkbox("🐛 Debug Mode", help="Show raw output for troubleshooting")
-        
+            debug_mode = st.checkbox(
+                "🐛 Debug Mode", help="Show raw output for troubleshooting"
+            )
+
         with gap_col:
             st.empty()  # Gap between button and checkbox
-        
+
         with button_col:
             # Run button
-            if st.button("🚀 Run Selected Test Case", disabled=(selected_test_case == "Select a test case...")):
+            if st.button(
+                "Run Selected Test Case",
+                disabled=(selected_test_case == "Select a test case..."),
+            ):
                 if selected_test_case == "Test Case 1 (3-day OOO)":
                     with st.spinner("Running Test Case 1..."):
                         report = run_test_case("test_case_1", debug=debug_mode)
                         if report:
                             st.session_state.current_report = report
                             st.session_state.current_test_case = "Test Case 1"
-                
+
                 elif selected_test_case == "Test Case 2 (7-day OOO)":
                     with st.spinner("Running Test Case 2..."):
                         report = run_test_case("test_case_2", debug=debug_mode)
                         if report:
                             st.session_state.current_report = report
                             st.session_state.current_test_case = "Test Case 2"
-                
+
                 elif selected_test_case == "Test Case 3 (14-day OOO)":
                     with st.spinner("Running Test Case 3..."):
                         report = run_test_case("test_case_3", debug=debug_mode)
                         if report:
                             st.session_state.current_report = report
                             st.session_state.current_test_case = "Test Case 3"
-                
+
                 elif selected_test_case == "Run All Test Cases":
                     with st.spinner("Running all test cases..."):
                         reports = run_all_test_cases(debug=debug_mode)
                         if reports:
                             st.session_state.all_reports = reports
                             st.session_state.current_test_case = "All Test Cases"
-    
+
     with col3:
         st.empty()  # Empty space for centering
-    
+
     # Main content area
-    
+
     # Display current report
-    if hasattr(st.session_state, 'current_report') and st.session_state.current_report:
-        display_report(st.session_state.current_report, st.session_state.current_test_case)
-    
+    if hasattr(st.session_state, "current_report") and st.session_state.current_report:
+        display_report(
+            st.session_state.current_report, st.session_state.current_test_case
+        )
+
     # Display all reports
-    elif hasattr(st.session_state, 'all_reports') and st.session_state.all_reports:
-        st.markdown("## 📊 All Test Cases Results")
-        
+    elif hasattr(st.session_state, "all_reports") and st.session_state.all_reports:
+        st.markdown("## All Test Cases Results")
+
         for test_case, report in st.session_state.all_reports.items():
             if report:
                 display_report(report, test_case)
                 st.markdown("---")
-    
-    # Default state
-    else:
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("**Available Test Cases:**")
-            st.markdown("- **Test Case 1**: 3-day OOO period")
-            st.markdown("- **Test Case 2**: 7-day OOO period")  
-            st.markdown("- **Test Case 3**: 14-day OOO period")
-            st.markdown("- **Run All**: Execute all test cases sequentially")
-        
-        with col2:
-            st.markdown("**How to use:**")
-            st.markdown("1. 🎯 Select a test case from the dropdown above")
-            st.markdown("2. 🚀 Click 'Run Selected Test Case' button")
-            st.markdown("3. 📊 View the generated report below")
-        
-        st.markdown("**Each test case will:**")
-        st.markdown("1. 🗄️ Seed the database with relevant data")
-        st.markdown("2. 🤖 Run the OOO Summariser Agent")
-        st.markdown("3. 📊 Generate a structured JSON report")
-        st.markdown("4. 🎨 Render the results")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Show sample data structure
-        with st.expander("📋 Expected Report Structure"):
-            st.json({
-                "summary": "Critical production system outage requires immediate attention, along with security vulnerability patches and Q1 planning sessions.",
-                "action_items": {
-                    "P0": [
-                        {
-                            "id": "email_001",
-                            "title": "CRITICAL: Production System Outage",
-                            "due_date": "2024-01-02",
-                            "source": "email",
-                            "context": "Production API is down and customers are affected. Immediate attention required."
-                        }
-                    ],
-                    "P1": [
-                        {
-                            "id": "email_005",
-                            "title": "Q1 Strategic Planning Session",
-                            "due_date": "2024-01-03",
-                            "source": "email",
-                            "context": "Q1 strategic planning session scheduled. Your input required for roadmap decisions."
-                        }
-                    ],
-                    "P2": []
-                },
-                "updates": {
-                    "email": {
-                        "P0": [{"id": "email_001", "title": "Production System Outage Alert", "due_date": "2024-01-02", "source": "email", "context": "Urgent system outage affecting multiple clients."}],
-                        "P1": [{"id": "email_005", "title": "Q1 Planning Meeting Invite", "due_date": "2024-01-03", "source": "email", "context": "Strategic planning session for Q1 roadmap."}]
-                    },
-                    "calendar": {
-                        "P0": [{"id": "event_001", "title": "Emergency Incident Response", "due_date": "2024-01-02", "source": "calendar", "context": "Emergency response meeting for production system outage."}],
-                        "P1": [{"id": "event_003", "title": "Infrastructure Migration Planning", "due_date": "2024-01-05", "source": "calendar", "context": "Planning session for upcoming infrastructure migration project."}]
-                    },
-                    "slack": {
-                        "P0": [{"id": "slack_001", "title": "Security Vulnerability Alert", "due_date": "2024-01-02", "source": "slack", "context": "Critical security vulnerability detected. Immediate patch deployment required."}],
-                        "P1": [{"id": "slack_007", "title": "Client Escalation Discussion", "due_date": "2024-01-04", "source": "slack", "context": "Major client escalation requires technical review and response strategy."}]
-                    }
-                }
-            })
+
 
 if __name__ == "__main__":
     main()

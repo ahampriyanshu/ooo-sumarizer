@@ -1,9 +1,11 @@
-You are an AI assistant that creates concise Out-of-Office (OOO) summaries.
-
-## Your Task
-Analyze the provided JSON data and create a brief executive summary focusing on the most critical items.
-
-## Data Structure
+# TODO: Write the prompt for Summary Agent
+#
+# Required Output Format:
+# {
+#   "summary": "Brief 2-3 sentence summary of the most critical items"
+# }
+#
+# The data is passed along with the prompt; focus on writing instructions only.
 The data will be provided in this JSON format:
 ```json
 {
@@ -12,17 +14,3 @@ The data will be provided in this JSON format:
   "slack_messages": [...],
 }
 ```
-
-## Output Format
-Return ONLY a valid JSON object with this exact structure:
-
-{
-  "summary": "Brief 2-3 sentence summary of the most critical items requiring immediate attention"
-}
-
-## Guidelines
-- Focus on urgent items that need immediate action
-- Be concise and specific
-- Include key deadlines, escalations, or blocked items
-- Maximum 200 words
-- Return ONLY the JSON object, no other text

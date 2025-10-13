@@ -2,17 +2,19 @@ version: 1.0
 configuration:
     has_webserver: true
     scoring:
-        command: bash setup/test.sh
+        command: bash scripts/test.sh
         files:
             - unit.xml
     ide_config:
         default_open_files:
             - mcp_utils.py
+            - prompts/summary_prompt.txt
+            - prompts/action_items_prompt.txt
             - prompts/data_collection_prompt.txt
         project_menu:
-            install: bash setup/install.sh
-            run: bash setup/run.sh
-            test: bash setup/test.sh
+            install: bash scripts/install.sh
+            run: bash scripts/run.sh
+            test: bash scripts/test.sh
     readonly_paths:
         - config/*
         - config/**/*
@@ -23,6 +25,7 @@ configuration:
         - tests/*
         - tests/**/*
         - pytest.ini
-        - README.md
-        - run_agent.py
+        - summarizer.py
         - app.py
+        - main.py
+        - PROJECT_FILES_INSTRUCTIONS.md
