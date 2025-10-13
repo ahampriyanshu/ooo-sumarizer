@@ -20,8 +20,6 @@ configuration:
         - data/**/*
         - mcp_servers/*
         - mcp_servers/**/*
-        - prompts/*
-        - prompts/**/*
         - tests/*
         - tests/**/*
         - pytest.ini
