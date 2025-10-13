@@ -116,10 +116,10 @@ The following files and code sections need to be completed:
 
 ## Streamlit Web Interface
 
-The project includes a beautiful web interface built with Streamlit for interactive testing and visualization:
+The project includes a web interface built with Streamlit for interactive testing and visualization:
 
 ### Run the web app
 
 ```bash
-streamlit run app.py
+streamlit run app.py --server.port 8000
 ```
