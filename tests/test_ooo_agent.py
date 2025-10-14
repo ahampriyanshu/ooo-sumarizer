@@ -1,5 +1,5 @@
 """
-Test suite for OOO Summariser Agent
+Test suite for OOO Summarizer Agent
 Tests the agent's output JSON structure, prioritization, and data processing
 """
 
@@ -23,7 +23,7 @@ def load_test_data(test_case="test_case_1"):
 
 
 class TestOOOSummarizerAgent:
-    """Test class for OOO Summariser Agent output validation"""
+    """Test class for OOO Summarizer Agent output validation"""
 
     def _get_agent_report(self, test_case):
         """Get agent report for a specific test case, with caching"""

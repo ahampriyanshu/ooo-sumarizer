@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Streamlit App for OOO Summariser Agent
+Streamlit App for OOO Summarizer Agent
 Provides a web interface to run test cases and visualize results
 """
 
@@ -11,7 +11,7 @@ import re
 
 # Page configuration
 st.set_page_config(
-    page_title="OOO Summariser Agent",
+    page_title="OOO Summarizer Agent",
     page_icon="📧",
     layout="centered",
     initial_sidebar_state="collapsed",
@@ -856,13 +856,13 @@ def display_report(report, test_case_name=None):
 def main():
     # Main header with border
     st.markdown(
-        '<div class="header-container"><div class="main-header">OOO Summariser Agent</div><div class="main-subtitle">Automated Out-of-Office Communication Analysis and Action Item Prioritization</div></div>',
+        '<div class="header-container"><div class="main-header">OOO Summarizer Agent</div><div class="main-subtitle">Automated Out-of-Office Communication Analysis and Action Item Prioritization</div></div>',
         unsafe_allow_html=True,
     )
 
     # Test case selection section
     st.markdown(
-        '<div class="test-cases-header"><h2>Test Cases</h2><p>Select a test case to run the OOO Summariser Agent:</p></div>',
+        '<div class="test-cases-header"><h2>Test Cases</h2><p>Select a test case to run the OOO Summarizer Agent:</p></div>',
         unsafe_allow_html=True,
     )
 
@@ -878,7 +878,7 @@ def main():
     selected_test_case = st.selectbox(
         "Select Test Case:",
         options=test_case_options,
-        help="Choose a test case to run the OOO Summariser Agent",
+        help="Choose a test case to run the OOO Summarizer Agent",
     )
 
     # Run button and debug mode checkbox in same row, centered with gap
