@@ -8,8 +8,6 @@ configuration:
     ide_config:
         default_open_files:
             - mcp_utils.py
-            - prompts/summary_prompt.txt
-            - prompts/action_items_prompt.txt
             - prompts/data_collection_prompt.txt
         project_menu:
             install: bash scripts/install.sh
@@ -28,4 +26,6 @@ configuration:
         - summarizer.py
         - app.py
         - main.py
+        - prompts/summary_prompt.txt
+        - prompts/action_items_prompt.txt
         - PROJECT_FILES_INSTRUCTIONS.md

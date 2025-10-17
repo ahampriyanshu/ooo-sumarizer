@@ -22,8 +22,3 @@ rm -rf __pycache__/
 
 # Remove unit test results
 rm -f unit.xml
-
-# Remove any temporary files
-find . -name "*.pyc" -delete
-find . -name "*.pyo" -delete
-find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
