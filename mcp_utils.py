@@ -14,33 +14,45 @@ from mcp_use import MCPAgent, MCPClient
 def get_mcp_config() -> Dict[str, Any]:
     """
     Get the MCP server configuration.
-
+    
     Returns:
         Dict containing MCP server configuration
     """
     return {
-        "mcpServers": {
-            "email": {"command": "python", "args": ["mcp_servers/email_server.py"]},
-            # Add the remaining MCP servers here
+        'mcpServers': {
+            'email': {
+                'command': 'python',
+                'args': ['mcp_servers/email_server.py']
+            },
+            'calendar': {
+                'command': 'python', 
+                'args': ['mcp_servers/calendar_server.py']
+            },
+            'slack': {
+                'command': 'python',
+                'args': ['mcp_servers/slack_server.py']
+            },
         }
     }
-
 
 def get_mcp_client() -> MCPClient:
     """
     Create MCP client from configuration.
-
+    
     Returns:
         Configured MCPClient instance
     """
-    raise NotImplementedError("Get the MCP config and create the MCP client")
+    config = get_mcp_config()
+    return MCPClient.from_dict(config)
 
 
 def get_mcp_agent(llm: ChatOpenAI) -> MCPAgent:
     """
     Create MCP agent with LLM and client.
-
+        
     Returns:
         Configured MCPAgent instance
     """
-    raise NotImplementedError("Get the MCP client and create the MCP agent")
+    client = get_mcp_client()
+    agent = MCPAgent(llm=llm, client=client)
+    return agent
